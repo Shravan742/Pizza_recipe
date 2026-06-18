@@ -613,17 +613,24 @@ export default function DoughCalculator({
   useEffect(() => {
     const { min, max } = selectedFlour.recommendedHydration;
     const clamp = (v: number) => Math.min(max, Math.max(min, v));
-    const match = PIZZA_PRESETS.find(p =>
-      hydration    === clamp(p.hydration) &&
-      saltPercent  === p.saltPercent &&
-      yeastPercent === p.yeastPercent &&
-      yeastType    === p.yeastType &&
-      oilPercent   === p.oilPercent &&
-      sugarPercent === p.sugarPercent
-    );
+    const match = PIZZA_PRESETS.find(p => {
+      // ballWeight must match one of the S/M/L scaled values for this preset
+      const validWeights = (['S', 'M', 'L'] as PizzaSize[]).map(s =>
+        Math.round((p.ballWeight * SIZE_FACTORS[s]) / 5) * 5
+      );
+      return (
+        hydration    === clamp(p.hydration) &&
+        saltPercent  === p.saltPercent &&
+        yeastPercent === p.yeastPercent &&
+        yeastType    === p.yeastType &&
+        oilPercent   === p.oilPercent &&
+        sugarPercent === p.sugarPercent &&
+        validWeights.includes(ballWeight)
+      );
+    });
     setActivePresetId(match ? match.id : 'custom');
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydration, saltPercent, yeastPercent, yeastType, oilPercent, sugarPercent, selectedFlourId, blendEnabled, blendSecondId, blendPrimaryPct]);
+  }, [hydration, saltPercent, yeastPercent, yeastType, oilPercent, sugarPercent, ballWeight, selectedFlourId, blendEnabled, blendSecondId, blendPrimaryPct]);
 
   const updateField = <K extends keyof PizzaRecipe>(field: K, value: PizzaRecipe[K]) =>
     onChange({ ...recipe, [field]: value });
@@ -649,20 +656,22 @@ export default function DoughCalculator({
   const weights = calculateWeights();
   const activePreset = PIZZA_PRESETS.find(p => p.id === displayPresetId);
 
-  // Portion terminology — changes based on the active preset's style
+  // Portion terminology — follows the *active* selection (not the display card)
+  // so Step 03 labels stay correct when the user tweaks params into Custom mode
+  const activePresetForPortion = PIZZA_PRESETS.find(p => p.id === activePresetId);
   const portion = {
-    label:        activePreset?.portionLabel       ?? 'ball',
-    plural:       activePreset?.portionLabelPlural ?? 'balls',
-    type:         activePreset?.portionType        ?? 'ball',
-    isSlab:       activePreset?.portionType === 'slab',
-    isFlatbread:  activePreset?.portionType === 'flatbread',
+    label:        activePresetForPortion?.portionLabel       ?? 'ball',
+    plural:       activePresetForPortion?.portionLabelPlural ?? 'balls',
+    type:         activePresetForPortion?.portionType        ?? 'ball',
+    isSlab:       activePresetForPortion?.portionType === 'slab',
+    isFlatbread:  activePresetForPortion?.portionType === 'flatbread',
   };
 
   // Replaces {FLOUR} and {W} tokens in step strings with the selected flour's name/W-value
   const renderStep = (step: string) =>
-    step
-      .replace(/{FLOUR}/g, selectedFlour.germanLabel)
-      .replace(/{W}/g, selectedFlour.wValue);
+    step.includes('{')
+      ? step.replace(/{FLOUR}/g, selectedFlour.germanLabel).replace(/{W}/g, selectedFlour.wValue)
+      : step;
 
   // Status: is the current hydration safe for the currently selected flour?
   const hydrationRangeStatus = (() => {
@@ -1181,7 +1190,7 @@ export default function DoughCalculator({
                   <span className="font-black">⚠ Home Oven Adaptation — </span>{activePreset.timings.homeNote}
                 </div>
               )}
-              {ovenType === 'pro' && !activePreset.timings.bakeTempHome && (
+              {ovenType === 'pro' && !activePreset.timings.homeNote && (
                 <div className="bg-emerald-50 border border-emerald-400 px-3 py-1.5 text-[9px] font-mono text-emerald-800">
                   ✓ This style is designed for home oven temps — high heat gives the same or better result.
                 </div>
