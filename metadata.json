@@ -1,0 +1,6 @@
+{
+  "name": "Dough Control Logbook",
+  "description": "Interactive pizza and focaccia dough calculator, thermodynamics target water temp system, failure diagnostics, and digital logbook.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
