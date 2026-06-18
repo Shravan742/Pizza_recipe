@@ -9,6 +9,7 @@ import DoughCalculator, { CalculatedWeights } from './components/DoughCalculator
 import FdtCalculator from './components/FdtCalculator';
 import Diagnostics from './components/Diagnostics';
 import LabJournal from './components/LabJournal';
+import { MixingMethodType } from './types';
 import {
   Scale,
   Thermometer,
@@ -39,6 +40,7 @@ export default function App() {
   });
 
   const [waterTemp, setWaterTemp] = useState<number>(15);
+  const [mixerType, setMixerType] = useState<MixingMethodType>('hand');
 
   // Transfer recipe data to the digital lab journal draft
   const handleSendToJournal = (calculatedRecipe: PizzaRecipe, weights: CalculatedWeights) => {
@@ -165,6 +167,8 @@ export default function App() {
                   onChange={setRecipe}
                   onSendToFdt={handleSendToFdt}
                   onSendToJournal={handleSendToJournal}
+                  selectedMixer={mixerType}
+                  onMixerChange={setMixerType}
                 />
               </div>
 
@@ -187,6 +191,7 @@ export default function App() {
                   initialFlourWeight={recipe.numBalls * recipe.ballWeight / (1 + (recipe.hydration / 100) + (recipe.saltPercent / 100) + (recipe.yeastPercent / 100))}
                   initialWaterWeight={((recipe.numBalls * recipe.ballWeight / (1 + (recipe.hydration / 100) + (recipe.saltPercent / 100) + (recipe.yeastPercent / 100))) * (recipe.hydration / 100))}
                   onWaterTempCalculated={setWaterTemp}
+                  initialMixingMethod={mixerType}
                 />
               </div>
             </div>

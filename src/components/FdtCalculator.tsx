@@ -11,20 +11,27 @@ interface FdtCalculatorProps {
   initialFlourWeight?: number;
   initialWaterWeight?: number;
   onWaterTempCalculated?: (waterTemp: number) => void;
+  initialMixingMethod?: MixingMethodType;
 }
 
 export default function FdtCalculator({
   initialFlourWeight = 1000,
   initialWaterWeight = 650,
   onWaterTempCalculated,
+  initialMixingMethod = 'hand',
 }: FdtCalculatorProps) {
   const [fdtParams, setFdtParams] = useState<FdtCalculation>({
     desiredFdt: 22,
     flourTemp: 21,
     roomTemp: 22,
-    mixingMethod: 'hand',
+    mixingMethod: initialMixingMethod,
     customFriction: 3,
   });
+
+  // Sync mixer from parent when user changes it on the main config panel
+  useEffect(() => {
+    setFdtParams(prev => ({ ...prev, mixingMethod: initialMixingMethod }));
+  }, [initialMixingMethod]);
 
   const { desiredFdt, flourTemp, roomTemp, mixingMethod, customFriction } = fdtParams;
 
