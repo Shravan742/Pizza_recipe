@@ -359,6 +359,7 @@ export default function DoughCalculator({
   const { numBalls, ballWeight, hydration, saltPercent, yeastPercent, yeastType } = recipe;
 
   const [activePresetId, setActivePresetId] = useState<string>('neapolitan');
+  const [displayPresetId, setDisplayPresetId] = useState<string>('neapolitan');
   const [activeMixerTab, setActiveMixerTab] = useState<'stand' | 'spiral' | 'hand'>('stand');
   const [activeGermanTab, setActiveGermanTab] = useState<'flour' | 'oven'>('flour');
   const [selectedFlourId, setSelectedFlourId] = useState<string>('typ550');
@@ -386,6 +387,7 @@ export default function DoughCalculator({
 
   const handleSelectPreset = (presetId: string) => {
     setActivePresetId(presetId);
+    if (presetId !== 'custom') setDisplayPresetId(presetId);
     if (presetId === 'custom') return;
     const found = PIZZA_PRESETS.find(p => p.id === presetId);
     if (found) {
@@ -423,7 +425,7 @@ export default function DoughCalculator({
     });
   };
 
-  const activePreset = PIZZA_PRESETS.find(p => p.id === activePresetId);
+  const activePreset = PIZZA_PRESETS.find(p => p.id === displayPresetId);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8" id="dough-calculator-section">
