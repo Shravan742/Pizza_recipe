@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FdtCalculation, MixingMethodType } from '../types';
 import { Thermometer, HelpCircle, ChevronRight, AlertTriangle, Snowflake, Info } from 'lucide-react';
 
@@ -28,9 +28,13 @@ export default function FdtCalculator({
     customFriction: 3,
   });
 
-  // Sync mixer from parent when user changes it on the main config panel
+  // Sync mixer only when the parent prop actually changes value (not on every re-render)
+  const prevMixingMethodRef = useRef(initialMixingMethod);
   useEffect(() => {
-    setFdtParams(prev => ({ ...prev, mixingMethod: initialMixingMethod }));
+    if (prevMixingMethodRef.current !== initialMixingMethod) {
+      prevMixingMethodRef.current = initialMixingMethod;
+      setFdtParams(prev => ({ ...prev, mixingMethod: initialMixingMethod }));
+    }
   }, [initialMixingMethod]);
 
   const { desiredFdt, flourTemp, roomTemp, mixingMethod, customFriction } = fdtParams;

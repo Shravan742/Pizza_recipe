@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { PizzaRecipe, MixingMethodType } from '../types';
 import DoughProcess3D from './DoughProcess3D';
 import {
@@ -473,26 +473,35 @@ export default function DoughCalculator({
   // Tracks the base ball weight of the last explicitly chosen preset (used for S/M/L scaling)
   const baseBallWeightRef = useRef<number>(280);
 
-  const primaryFlour = FLOUR_TYPES.find(f => f.id === selectedFlourId) || FLOUR_TYPES[0];
-  const secondFlour  = FLOUR_TYPES.find(f => f.id === blendSecondId)   || FLOUR_TYPES[2];
-  const secondPct    = 100 - blendPrimaryPct;
+  const primaryFlour = useMemo(
+    () => FLOUR_TYPES.find(f => f.id === selectedFlourId) || FLOUR_TYPES[0],
+    [selectedFlourId]
+  );
+  const secondFlour = useMemo(
+    () => FLOUR_TYPES.find(f => f.id === blendSecondId) || FLOUR_TYPES[2],
+    [blendSecondId]
+  );
+  const secondPct = 100 - blendPrimaryPct;
 
-  // Effective (possibly blended) flour properties used for hydration clamping + display
-  const selectedFlour: FlourType = blendEnabled ? {
-    ...primaryFlour,
-    wValue: `W${Math.round((primaryFlour.wMin * blendPrimaryPct + secondFlour.wMin * secondPct) / 100)}–${Math.round((primaryFlour.wMax * blendPrimaryPct + secondFlour.wMax * secondPct) / 100)}`,
-    wMin: Math.round((primaryFlour.wMin * blendPrimaryPct + secondFlour.wMin * secondPct) / 100),
-    wMax: Math.round((primaryFlour.wMax * blendPrimaryPct + secondFlour.wMax * secondPct) / 100),
-    proteinRange: `${((primaryFlour.proteinMin * blendPrimaryPct + secondFlour.proteinMin * secondPct) / 100).toFixed(1)}–${((primaryFlour.proteinMax * blendPrimaryPct + secondFlour.proteinMax * secondPct) / 100).toFixed(1)}%`,
-    proteinMin: (primaryFlour.proteinMin * blendPrimaryPct + secondFlour.proteinMin * secondPct) / 100,
-    proteinMax: (primaryFlour.proteinMax * blendPrimaryPct + secondFlour.proteinMax * secondPct) / 100,
-    recommendedHydration: {
-      min: Math.round((primaryFlour.recommendedHydration.min * blendPrimaryPct + secondFlour.recommendedHydration.min * secondPct) / 100),
-      max: Math.round((primaryFlour.recommendedHydration.max * blendPrimaryPct + secondFlour.recommendedHydration.max * secondPct) / 100),
-    },
-    germanLabel: `${blendPrimaryPct}% ${primaryFlour.germanLabel} + ${secondPct}% ${secondFlour.germanLabel}`,
-    alterationTip: `Blend: ${primaryFlour.alterationTip} / ${secondFlour.alterationTip}`,
-  } : primaryFlour;
+  // Effective (possibly blended) flour — memoised so it's stable unless inputs change
+  const selectedFlour: FlourType = useMemo(() => {
+    if (!blendEnabled) return primaryFlour;
+    return {
+      ...primaryFlour,
+      wValue: `W${Math.round((primaryFlour.wMin * blendPrimaryPct + secondFlour.wMin * secondPct) / 100)}–${Math.round((primaryFlour.wMax * blendPrimaryPct + secondFlour.wMax * secondPct) / 100)}`,
+      wMin: Math.round((primaryFlour.wMin * blendPrimaryPct + secondFlour.wMin * secondPct) / 100),
+      wMax: Math.round((primaryFlour.wMax * blendPrimaryPct + secondFlour.wMax * secondPct) / 100),
+      proteinRange: `${((primaryFlour.proteinMin * blendPrimaryPct + secondFlour.proteinMin * secondPct) / 100).toFixed(1)}–${((primaryFlour.proteinMax * blendPrimaryPct + secondFlour.proteinMax * secondPct) / 100).toFixed(1)}%`,
+      proteinMin: (primaryFlour.proteinMin * blendPrimaryPct + secondFlour.proteinMin * secondPct) / 100,
+      proteinMax: (primaryFlour.proteinMax * blendPrimaryPct + secondFlour.proteinMax * secondPct) / 100,
+      recommendedHydration: {
+        min: Math.round((primaryFlour.recommendedHydration.min * blendPrimaryPct + secondFlour.recommendedHydration.min * secondPct) / 100),
+        max: Math.round((primaryFlour.recommendedHydration.max * blendPrimaryPct + secondFlour.recommendedHydration.max * secondPct) / 100),
+      },
+      germanLabel: `${blendPrimaryPct}% ${primaryFlour.germanLabel} + ${secondPct}% ${secondFlour.germanLabel}`,
+      alterationTip: `Blend: ${primaryFlour.alterationTip} / ${secondFlour.alterationTip}`,
+    };
+  }, [blendEnabled, primaryFlour, secondFlour, blendPrimaryPct, secondPct]);
 
   // ── Auto-calculate the best hydration for a given preset + flour combination ──
   const clampHydration = (raw: number, flour: FlourType) =>
@@ -529,17 +538,23 @@ export default function DoughCalculator({
   // ── Select flour → auto-clamp hydration immediately, no warnings ──
   const handleSelectFlour = (flourId: string) => {
     setSelectedFlourId(flourId);
-    // If second flour of a blend is the same as the new primary, swap to the first available different one
+    const newPrimary = FLOUR_TYPES.find(f => f.id === flourId)!;
+
+    // Resolve which second flour will be active after this change (may need fallback)
+    let resolvedSecond = secondFlour;
     if (blendEnabled && blendSecondId === flourId) {
       const fallback = FLOUR_TYPES.find(f => f.id !== flourId);
-      if (fallback) setBlendSecondId(fallback.id);
+      if (fallback) {
+        resolvedSecond = fallback; // use the new value immediately for clamping
+        setBlendSecondId(fallback.id);
+      }
     }
-    const newPrimary = FLOUR_TYPES.find(f => f.id === flourId)!;
+
     const effectiveMin = blendEnabled
-      ? Math.round((newPrimary.recommendedHydration.min * blendPrimaryPct + secondFlour.recommendedHydration.min * (100 - blendPrimaryPct)) / 100)
+      ? Math.round((newPrimary.recommendedHydration.min * blendPrimaryPct + resolvedSecond.recommendedHydration.min * (100 - blendPrimaryPct)) / 100)
       : newPrimary.recommendedHydration.min;
     const effectiveMax = blendEnabled
-      ? Math.round((newPrimary.recommendedHydration.max * blendPrimaryPct + secondFlour.recommendedHydration.max * (100 - blendPrimaryPct)) / 100)
+      ? Math.round((newPrimary.recommendedHydration.max * blendPrimaryPct + resolvedSecond.recommendedHydration.max * (100 - blendPrimaryPct)) / 100)
       : newPrimary.recommendedHydration.max;
     const clamped = Math.min(effectiveMax, Math.max(effectiveMin, hydration));
     if (clamped !== hydration) onChange({ ...recipe, hydration: clamped });
@@ -985,10 +1000,12 @@ export default function DoughCalculator({
                 Active Formula
               </span>
               <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mt-2 font-mono">
-                {activePreset ? activePreset.name : 'Custom Manual Formulation'}
+                {activePresetId === 'custom'
+                  ? (activePreset ? `Custom · ${activePreset.shortName}` : 'Custom Formula')
+                  : (activePreset?.name ?? 'Custom Formula')}
               </h3>
               {activePresetId === 'custom' && activePreset && (
-                <span className="text-[9px] font-mono text-slate-400">Based on {activePreset.name} — parameters modified</span>
+                <span className="text-[9px] font-mono text-slate-400">Deviating from {activePreset.name} — parameters manually adjusted</span>
               )}
             </div>
             <div className="sm:text-right shrink-0">

@@ -188,8 +188,14 @@ export default function App() {
                   </span>
                 </div>
                 <FdtCalculator
-                  initialFlourWeight={recipe.numBalls * recipe.ballWeight / (1 + (recipe.hydration / 100) + (recipe.saltPercent / 100) + (recipe.yeastPercent / 100))}
-                  initialWaterWeight={((recipe.numBalls * recipe.ballWeight / (1 + (recipe.hydration / 100) + (recipe.saltPercent / 100) + (recipe.yeastPercent / 100))) * (recipe.hydration / 100))}
+                  initialFlourWeight={(() => {
+                    const d = 1 + recipe.hydration/100 + recipe.saltPercent/100 + recipe.yeastPercent/100 + (recipe.oilPercent||0)/100 + (recipe.sugarPercent||0)/100;
+                    return recipe.numBalls * recipe.ballWeight / d;
+                  })()}
+                  initialWaterWeight={(() => {
+                    const d = 1 + recipe.hydration/100 + recipe.saltPercent/100 + recipe.yeastPercent/100 + (recipe.oilPercent||0)/100 + (recipe.sugarPercent||0)/100;
+                    return (recipe.numBalls * recipe.ballWeight / d) * (recipe.hydration / 100);
+                  })()}
                   onWaterTempCalculated={setWaterTemp}
                   initialMixingMethod={mixerType}
                 />
