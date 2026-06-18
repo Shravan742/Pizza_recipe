@@ -53,8 +53,11 @@ export interface PizzaPreset {
     bulkCold: string;
     ballRT: string;
     ballCold: string;
-    bakeTemp: string;
+    bakeTemp: string;        // professional / high-heat version
     bakeTime: string;
+    bakeTempHome?: string;   // home Backofen ≤250°C alternative
+    bakeTimeHome?: string;
+    homeNote?: string;       // warning shown when home oven selected
   };
   steps: string[];
 }
@@ -79,18 +82,21 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '16–20 hours @ 7°C',
       ballRT: '3–4 hours @ 22°C',
       ballCold: '0 hours',
-      bakeTemp: '450°C (wood) / 300°C (steel)',
+      bakeTemp: '450°C (Holzofen) / 300°C+ (Baking Steel)',
       bakeTime: '60–90s (wood) / 4–5 min (steel)',
+      bakeTempHome: '250°C max — Baking Steel, unterste Schiene, 1h preheat',
+      bakeTimeHome: '6–9 min',
+      homeNote: 'Works well at home with a Baking Steel. No leopard char but excellent open crumb and crust.',
     },
     steps: [
       'Dissolve 1.3g dry yeast (or 4g fresh) in all of the calculated water at 12–15°C.',
-      'Add 75% of the Tipo 00 flour (W280–300). Mix by hand until a shaggy mass forms. Rest 15 min — gluten links build passively (autolyse).',
+      'Add 75% of the {FLOUR} ({W}). Mix by hand until a shaggy mass forms. Rest 15 min — gluten links build passively (autolyse).',
       'Add remaining flour slowly. Knead 15–20 min by hand: push away with heel of palm, fold back, rotate 90°, repeat.',
       'Scatter salt evenly. Knead 3–5 min more until fully smooth and silky.',
       'Shape into a ball, cover, rest 2 hours at room temp (~22°C). Yeast wakes up and begins CO₂ production.',
       'Transfer sealed to fridge (7°C). Cold ferment 16–20 hours. Aroma and acids develop slowly.',
       'Remove. Portion into balls. Rest 3–4 hours at room temp before baking.',
-      'Bake at max heat: 450°C in wood oven (60–90s) or 300°C on preheated baking steel (4–5 min).',
+      'Bake at maximum available heat — see bake temperature above. Preheat steel or stone at least 45–60 min before baking.',
     ],
   },
   {
@@ -112,18 +118,21 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '0 hours (not recommended)',
       ballRT: '6 hours @ 20°C',
       ballCold: '0 hours (not recommended)',
-      bakeTemp: '430°C – 485°C (wood-fired deck)',
+      bakeTemp: '430°C – 485°C (Holzofen / Effeuno)',
       bakeTime: '60–90 seconds',
+      bakeTempHome: '250°C max — Baking Steel, unterste Schiene, 1h preheat',
+      bakeTimeHome: '7–10 min',
+      homeNote: 'True Neapolitan needs 430°C+. At 250°C the cornicione won\'t leopard-char — expect a fuller, bready crust. Still tasty, just not STG-compliant.',
     },
     steps: [
       'Dissolve dry or fresh yeast completely in all of the calculated water.',
-      'Blend in roughly 75% of your Tipo 00 flour. Mix by hand until a wet cohesive batter forms. Rest 15–20 min (autolyse).',
+      'Blend in roughly 75% of your {FLOUR} ({W}). Mix by hand until a wet cohesive batter forms. Rest 15–20 min (autolyse).',
       'Scatter the fine sea salt onto the batter, then add remaining flour progressively.',
       'Knead thoroughly until a silky, strong gluten network is formed.',
       'Shape into a single ball, cover, ferment at ambient room temp (18–21°C) for exactly 18 hours.',
       'Divide into 250g pieces. Tuck and roll tightly from bottom to top.',
       'Place balls in covered proofing boxes. Proof at room temp for another 6 hours.',
-      'Stretch from center outwards. Form a thin center and puffy rim (cornicione). Bake at 450°C for 60–90s.',
+      'Stretch from center outwards. Form a thin center and puffy rim (cornicione). Bake at maximum available heat — see bake temperature above.',
     ],
   },
   {
@@ -145,8 +154,11 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '24–40 hours @ 4–6°C',
       ballRT: '4–6 hours @ 20°C',
       ballCold: '0 hours',
-      bakeTemp: '400°C – 430°C (high heat deck)',
+      bakeTemp: '400°C – 430°C (Holzofen / Effeuno / Deck)',
       bakeTime: '70–100 seconds',
+      bakeTempHome: '250°C max — Baking Steel, oberste Schiene, 1h preheat',
+      bakeTimeHome: '8–12 min',
+      homeNote: 'Canotto\'s alveolated rim needs high heat to set quickly. At 250°C the rim rises fully but won\'t char — still a beautiful open crumb.',
     },
     steps: [
       'Stir yeast into cold water. Whisk in 70% of flour to form a thick shaggy paste. Sit 30 min (amylase activation).',
@@ -177,8 +189,11 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '24–72 hours @ 4°C',
       ballRT: '3–4 hours @ 22°C',
       ballCold: '12–24 hours @ 4°C (optional)',
-      bakeTemp: '260°C – 280°C (deck steel)',
+      bakeTemp: '260°C – 280°C (Baking Steel / Deck)',
       bakeTime: '6–9 minutes',
+      bakeTempHome: '240–250°C (max) — Baking Steel, unterste Schiene, 1h preheat',
+      bakeTimeHome: '8–11 min',
+      homeNote: 'NY Style works well at home. The sugar/oil aid Maillard browning even at lower temps.',
     },
     steps: [
       'Mix flour, dry yeast, and 1% sugar or barley malt in a dry bowl.',
@@ -210,8 +225,10 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '24–48 hours @ 4°C',
       ballRT: '3–4 hours @ 21°C',
       ballCold: '0 hours',
-      bakeTemp: '250°C (home convection oven)',
+      bakeTemp: '250°C (Ober-/Unterhitze + Heißluft, blauer Stahlblech)',
       bakeTime: '12–15 minutes',
+      bakeTempHome: '250°C (Ober-/Unterhitze + Heißluft, blauer Stahlblech)',
+      bakeTimeHome: '12–15 minutes',
     },
     steps: [
       'Blend flour and yeast. Pour 80% of cooled water slowly at low speed.',
@@ -243,8 +260,11 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '20 hours @ 4°C',
       ballRT: '3 hours @ 22°C',
       ballCold: '0 hours',
-      bakeTemp: '300°C – 330°C (baking steel)',
+      bakeTemp: '300°C – 330°C (Baking Steel / Effeuno)',
       bakeTime: '3–4 minutes',
+      bakeTempHome: '250°C max — Baking Steel, oberste Schiene, 1h preheat',
+      bakeTimeHome: '5–7 min',
+      homeNote: 'Tonda is best at 300°C+. At 250°C the cracker-crispness is slightly softer — roll even thinner (< 1mm) to compensate.',
     },
     steps: [
       'Combine flour, yeast, cold water, and 3% olive oil. Mix on slow speed — 55% hydration makes a stiff, dense mass.',
@@ -276,8 +296,10 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '24–48 hours @ 4°C',
       ballRT: '3 hours in oiled pan @ 24°C',
       ballCold: '0 hours',
-      bakeTemp: '245°C – 260°C (home oven)',
+      bakeTemp: '250°C (Ober-/Unterhitze, unterste Schiene)',
       bakeTime: '12–15 minutes',
+      bakeTempHome: '250°C (Ober-/Unterhitze, unterste Schiene)',
+      bakeTimeHome: '12–15 minutes',
     },
     steps: [
       'Blend flour, yeast, and very cold water. Mix 4 min until hydrated.',
@@ -309,11 +331,14 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '0 hours',
       ballRT: '1 hour @ 22°C',
       ballCold: '0 hours',
-      bakeTemp: '275°C – 300°C (oven maxed + steel)',
+      bakeTemp: '275°C – 300°C (Ober-/Unterhitze + Baking Steel)',
       bakeTime: '4–5 minutes',
+      bakeTempHome: '250°C max — Ober-/Unterhitze + Baking Steel, oberste Schiene',
+      bakeTimeHome: '6–9 min',
+      homeNote: 'At 250°C edges won\'t bubble black — still crisp and delicious, just less dramatic char. Roll it paper-thin.',
     },
     steps: [
-      'Whisk Weizenmehl (Typ 550 or 405), salt, water, 3% neutral sunflower oil, and a tiny pinch of yeast.',
+      'Whisk {FLOUR}, salt, water, 3% neutral sunflower oil, and a tiny pinch of yeast.',
       'Knead intensely 10 min until the dough is stiff, slick, and completely non-sticky.',
       'Cover on counter for 1 hour at room temp — resting relaxes gluten so you can roll paper-thin without spring-back.',
       'Slice into 150–160g portions. Roll into smooth, dry spheres. Rest covered 45 min more.',
@@ -341,8 +366,10 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '18–24 hours @ 4°C',
       ballRT: '3 hours on baking sheet @ 22°C',
       ballCold: '0 hours',
-      bakeTemp: '220°C – 230°C (home oven)',
+      bakeTemp: '220°C – 230°C (Ober-/Unterhitze)',
       bakeTime: '15–20 minutes',
+      bakeTempHome: '220°C – 230°C (Ober-/Unterhitze, mittlere Schiene)',
+      bakeTimeHome: '15–20 minutes',
     },
     steps: [
       'Dissolve yeast in calculated water. Drizzle in 3% cold-pressed olive oil. Add 80% of flour and mix.',
@@ -483,6 +510,7 @@ export default function DoughCalculator({
   const [blendEnabled, setBlendEnabled]       = useState(false);
   const [blendSecondId, setBlendSecondId]     = useState<string>('typ550');
   const [blendPrimaryPct, setBlendPrimaryPct] = useState<number>(70);
+  const [ovenType, setOvenType]               = useState<'home' | 'pro'>('home');
 
   // Tracks the base ball weight of the last explicitly chosen preset (used for S/M/L scaling)
   const baseBallWeightRef = useRef<number>(280);
@@ -630,6 +658,12 @@ export default function DoughCalculator({
     isSlab:       activePreset?.portionType === 'slab',
     isFlatbread:  activePreset?.portionType === 'flatbread',
   };
+
+  // Replaces {FLOUR} and {W} tokens in step strings with the selected flour's name/W-value
+  const renderStep = (step: string) =>
+    step
+      .replace(/{FLOUR}/g, selectedFlour.germanLabel)
+      .replace(/{W}/g, selectedFlour.wValue);
 
   // Status: is the current hydration safe for the currently selected flour?
   const hydrationRangeStatus = (() => {
@@ -932,6 +966,33 @@ export default function DoughCalculator({
             </p>
           </div>
 
+          {/* ── 05: Oven Type ── */}
+          <div className="p-5 border-b border-slate-200">
+            <StepHeader num="05" title="Oven Type" sub="adapts bake temp + time for your setup" />
+            <div className="flex gap-1.5">
+              {([
+                { id: 'home' as const, label: 'Home Backofen', sub: '≤ 250°C max' },
+                { id: 'pro'  as const, label: 'High Heat',     sub: 'Steel 280°C+ / Holzofen / Effeuno' },
+              ]).map((opt) => {
+                const isActive = ovenType === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setOvenType(opt.id)}
+                    className={`flex-1 py-2.5 px-2 border-2 rounded-none transition-all flex flex-col items-center gap-0.5 ${
+                      isActive
+                        ? 'bg-slate-900 border-slate-900 text-white'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-700'
+                    }`}
+                  >
+                    <span className="text-[10px] font-black uppercase">{opt.label}</span>
+                    <span className={`text-[8px] font-mono text-center leading-tight ${isActive ? 'text-white/60' : 'text-slate-400'}`}>{opt.sub}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* ── Advanced fine-tune (collapsed by default) ── */}
           <div className="border-b border-slate-200">
             <button
@@ -1115,14 +1176,29 @@ export default function DoughCalculator({
                 <Clock className="text-[#E60012] w-3 h-3" />
                 Fermentation Timeline
               </h4>
+              {/* Home oven note for presets designed for high heat */}
+              {ovenType === 'home' && activePreset.timings.homeNote && (
+                <div className="bg-amber-50 border-2 border-amber-400 px-3 py-2 text-[9px] font-mono text-amber-800">
+                  <span className="font-black">⚠ Home Oven Adaptation — </span>{activePreset.timings.homeNote}
+                </div>
+              )}
+              {ovenType === 'pro' && !activePreset.timings.bakeTempHome && (
+                <div className="bg-emerald-50 border border-emerald-400 px-3 py-1.5 text-[9px] font-mono text-emerald-800">
+                  ✓ This style is designed for home oven temps — high heat gives the same or better result.
+                </div>
+              )}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-50 border-2 border-slate-900 p-3 font-mono">
                 {([
                   ['Bulk (RT)', activePreset.timings.bulkRT],
                   ['Bulk (Cold)', activePreset.timings.bulkCold],
                   [`${portion.isSlab ? 'Pan' : portion.isFlatbread ? 'Piece' : 'Ball'} (RT)`, activePreset.timings.ballRT],
                   [`${portion.isSlab ? 'Pan' : portion.isFlatbread ? 'Piece' : 'Ball'} (Cold)`, activePreset.timings.ballCold],
-                  ['Bake Temp', activePreset.timings.bakeTemp],
-                  ['Bake Time', activePreset.timings.bakeTime],
+                  ['Bake Temp', ovenType === 'home' && activePreset.timings.bakeTempHome
+                    ? activePreset.timings.bakeTempHome
+                    : activePreset.timings.bakeTemp],
+                  ['Bake Time', ovenType === 'home' && activePreset.timings.bakeTimeHome
+                    ? activePreset.timings.bakeTimeHome
+                    : activePreset.timings.bakeTime],
                 ] as [string, string][]).map(([label, value]) => (
                   <div key={label}>
                     <span className="text-slate-400 block text-[8px] uppercase">{label}</span>
@@ -1146,7 +1222,7 @@ export default function DoughCalculator({
                     <span className="w-5 h-5 bg-slate-900 text-white font-mono text-[9px] flex items-center justify-center font-black shrink-0 mt-0.5">
                       {String(idx + 1).padStart(2, '0')}
                     </span>
-                    <span className="text-[11px] text-slate-800 font-semibold leading-relaxed font-sans">{step}</span>
+                    <span className="text-[11px] text-slate-800 font-semibold leading-relaxed font-sans">{renderStep(step)}</span>
                   </li>
                 ))}
               </ul>
