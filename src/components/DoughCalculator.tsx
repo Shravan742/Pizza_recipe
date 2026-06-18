@@ -30,6 +30,8 @@ export interface CalculatedWeights {
   total: number;
 }
 
+export type PortionType = 'ball' | 'slab' | 'flatbread';
+
 export interface PizzaPreset {
   id: string;
   name: string;
@@ -42,6 +44,9 @@ export interface PizzaPreset {
   oilPercent: number;
   sugarPercent: number;
   ballWeight: number;
+  portionType: PortionType;
+  portionLabel: string;       // singular: "ball", "tray", "pan", "flatbread"
+  portionLabelPlural: string; // plural:   "balls", "trays", "pans", "flatbreads"
   yeastType: 'dry' | 'fresh';
   timings: {
     bulkRT: string;
@@ -67,6 +72,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 0,
     sugarPercent: 0,
     ballWeight: 280,
+    portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
     timings: {
       bulkRT: '2 hours @ 22°C',
@@ -99,6 +105,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 0,
     sugarPercent: 0,
     ballWeight: 250,
+    portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
     timings: {
       bulkRT: '18 hours @ 20°C',
@@ -131,6 +138,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 0,
     sugarPercent: 0,
     ballWeight: 280,
+    portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
     timings: {
       bulkRT: '2 hours @ 20°C',
@@ -162,6 +170,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 2,
     sugarPercent: 1,
     ballWeight: 380,
+    portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
     timings: {
       bulkRT: '1 hour @ 22°C',
@@ -194,6 +203,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 2,
     sugarPercent: 0,
     ballWeight: 750,
+    portionType: 'slab', portionLabel: 'tray', portionLabelPlural: 'trays',
     yeastType: 'dry',
     timings: {
       bulkRT: '1 hour @ 20°C',
@@ -226,6 +236,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 3,
     sugarPercent: 0,
     ballWeight: 180,
+    portionType: 'flatbread', portionLabel: 'flatbread', portionLabelPlural: 'flatbreads',
     yeastType: 'dry',
     timings: {
       bulkRT: '2 hours @ 20°C',
@@ -258,6 +269,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 2,
     sugarPercent: 0,
     ballWeight: 450,
+    portionType: 'slab', portionLabel: 'pan', portionLabelPlural: 'pans',
     yeastType: 'dry',
     timings: {
       bulkRT: '2 hours @ 21°C',
@@ -290,6 +302,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 3,
     sugarPercent: 0,
     ballWeight: 155,
+    portionType: 'flatbread', portionLabel: 'flatbread', portionLabelPlural: 'flatbreads',
     yeastType: 'dry',
     timings: {
       bulkRT: '1 hour @ 21°C',
@@ -321,6 +334,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     oilPercent: 3,
     sugarPercent: 0,
     ballWeight: 600,
+    portionType: 'slab', portionLabel: 'tray', portionLabelPlural: 'trays',
     yeastType: 'dry',
     timings: {
       bulkRT: '2 hours @ 21°C',
@@ -608,6 +622,15 @@ export default function DoughCalculator({
   const weights = calculateWeights();
   const activePreset = PIZZA_PRESETS.find(p => p.id === displayPresetId);
 
+  // Portion terminology — changes based on the active preset's style
+  const portion = {
+    label:        activePreset?.portionLabel       ?? 'ball',
+    plural:       activePreset?.portionLabelPlural ?? 'balls',
+    type:         activePreset?.portionType        ?? 'ball',
+    isSlab:       activePreset?.portionType === 'slab',
+    isFlatbread:  activePreset?.portionType === 'flatbread',
+  };
+
   // Status: is the current hydration safe for the currently selected flour?
   const hydrationRangeStatus = (() => {
     const { min, max } = selectedFlour.recommendedHydration;
@@ -813,11 +836,15 @@ export default function DoughCalculator({
 
           {/* ── 03: Batch size ── */}
           <div className="p-5 border-b border-slate-200">
-            <StepHeader num="03" title="Batch Size" sub="how many + how big" />
+            <StepHeader
+              num="03"
+              title="Batch Size"
+              sub={portion.isSlab ? `how many ${portion.plural} + how heavy` : `how many + how big`}
+            />
             <div className="flex items-center gap-4">
-              {/* Number of balls stepper */}
+              {/* Quantity stepper */}
               <div className="flex flex-col gap-1">
-                <span className="text-[9px] font-mono text-slate-400 uppercase">Qty</span>
+                <span className="text-[9px] font-mono text-slate-400 uppercase"># {portion.plural}</span>
                 <div className="flex items-center border-2 border-slate-900">
                   <button
                     onClick={() => updateField('numBalls', Math.max(1, numBalls - 1))}
@@ -833,7 +860,9 @@ export default function DoughCalculator({
 
               {/* S / M / L size buttons */}
               <div className="flex-1 flex flex-col gap-1">
-                <span className="text-[9px] font-mono text-slate-400 uppercase">Ball size</span>
+                <span className="text-[9px] font-mono text-slate-400 uppercase">
+                  {portion.isSlab ? 'Portion weight' : portion.isFlatbread ? 'Piece weight' : 'Ball weight'}
+                </span>
                 <div className="flex gap-1.5">
                   {(['S', 'M', 'L'] as PizzaSize[]).map((size) => {
                     const w = Math.round((baseBallWeightRef.current * SIZE_FACTORS[size]) / 5) * 5;
@@ -857,10 +886,22 @@ export default function DoughCalculator({
               </div>
             </div>
 
+            {/* pan/slab tip */}
+            {portion.isSlab && (
+              <p className="mt-2 text-[9px] font-mono text-slate-400">
+                ★ Slab weight = total dough pressed into one {portion.label}. No ball-shaping step needed.
+              </p>
+            )}
+            {portion.isFlatbread && (
+              <p className="mt-2 text-[9px] font-mono text-slate-400">
+                ★ Each {portion.label} is rolled flat with a pin — no rounding into a ball.
+              </p>
+            )}
+
             {/* Summary line */}
             <div className="mt-2.5 bg-slate-900 text-white px-3 py-1.5 flex items-center justify-between font-mono">
               <span className="text-[9px] uppercase tracking-wide">Total batch</span>
-              <span className="text-sm font-black">{numBalls} × {ballWeight}g = {weights.total}g</span>
+              <span className="text-sm font-black">{numBalls} {portion.plural} × {ballWeight}g = {weights.total}g</span>
             </div>
           </div>
 
@@ -1011,7 +1052,7 @@ export default function DoughCalculator({
             <div className="sm:text-right shrink-0">
               <span className="text-[9px] text-slate-400 block font-mono uppercase">Total Dough</span>
               <span className="text-2xl font-black font-mono text-[#E60012]">{weights.total}g</span>
-              <span className="text-[9px] text-slate-400 block font-mono">{numBalls} balls × {ballWeight}g</span>
+              <span className="text-[9px] text-slate-400 block font-mono">{numBalls} {portion.plural} × {ballWeight}g</span>
             </div>
           </div>
 
@@ -1031,6 +1072,9 @@ export default function DoughCalculator({
             <h4 className="text-[9px] font-black uppercase tracking-widest font-mono text-slate-900 mb-2.5 flex items-center gap-1.5">
               <Scale className="w-3 h-3 text-[#E60012]" />
               Ingredient Weights
+              <span className="text-[8px] font-mono font-normal text-slate-400 normal-case">
+                — total for {numBalls} {portion.plural}
+              </span>
             </h4>
             <div className="grid grid-cols-2 gap-2.5">
               {blendEnabled ? (
@@ -1075,8 +1119,8 @@ export default function DoughCalculator({
                 {([
                   ['Bulk (RT)', activePreset.timings.bulkRT],
                   ['Bulk (Cold)', activePreset.timings.bulkCold],
-                  ['Ball (RT)', activePreset.timings.ballRT],
-                  ['Ball (Cold)', activePreset.timings.ballCold],
+                  [`${portion.isSlab ? 'Pan' : portion.isFlatbread ? 'Piece' : 'Ball'} (RT)`, activePreset.timings.ballRT],
+                  [`${portion.isSlab ? 'Pan' : portion.isFlatbread ? 'Piece' : 'Ball'} (Cold)`, activePreset.timings.ballCold],
                   ['Bake Temp', activePreset.timings.bakeTemp],
                   ['Bake Time', activePreset.timings.bakeTime],
                 ] as [string, string][]).map(([label, value]) => (
