@@ -55,7 +55,7 @@ export interface PizzaPreset {
     ballCold: string;
     bakeTemp: string;        // professional / high-heat version
     bakeTime: string;
-    bakeTempHome?: string;   // home Backofen ≤250°C alternative
+    bakeTempHome?: string;   // home oven ≤250°C alternative
     bakeTimeHome?: string;
     homeNote?: string;       // warning shown when home oven selected
   };
@@ -82,9 +82,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '16–20 hours @ 7°C',
       ballRT: '3–4 hours @ 22°C',
       ballCold: '0 hours',
-      bakeTemp: '450°C (Holzofen) / 300°C+ (Baking Steel)',
+      bakeTemp: '450°C (wood-fired) / 300°C+ (Baking Steel)',
       bakeTime: '60–90s (wood) / 4–5 min (steel)',
-      bakeTempHome: '250°C max — Baking Steel, unterste Schiene, 1h preheat',
+      bakeTempHome: '250°C max — Baking Steel, bottom rack, 1h preheat',
       bakeTimeHome: '6–9 min',
       homeNote: 'Works well at home with a Baking Steel. No leopard char but excellent open crumb and crust.',
     },
@@ -118,9 +118,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '0 hours (not recommended)',
       ballRT: '6 hours @ 20°C',
       ballCold: '0 hours (not recommended)',
-      bakeTemp: '430°C – 485°C (Holzofen / Effeuno)',
+      bakeTemp: '430°C – 485°C (wood-fired / Effeuno)',
       bakeTime: '60–90 seconds',
-      bakeTempHome: '250°C max — Baking Steel, unterste Schiene, 1h preheat',
+      bakeTempHome: '250°C max — Baking Steel, bottom rack, 1h preheat',
       bakeTimeHome: '7–10 min',
       homeNote: 'True Neapolitan needs 430°C+. At 250°C the cornicione won\'t leopard-char — expect a fuller, bready crust. Still tasty, just not STG-compliant.',
     },
@@ -154,9 +154,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '24–40 hours @ 4–6°C',
       ballRT: '4–6 hours @ 20°C',
       ballCold: '0 hours',
-      bakeTemp: '400°C – 430°C (Holzofen / Effeuno / Deck)',
+      bakeTemp: '400°C – 430°C (wood-fired / Effeuno / deck oven)',
       bakeTime: '70–100 seconds',
-      bakeTempHome: '250°C max — Baking Steel, oberste Schiene, 1h preheat',
+      bakeTempHome: '250°C max — Baking Steel, top rack, 1h preheat',
       bakeTimeHome: '8–12 min',
       homeNote: 'Canotto\'s alveolated rim needs high heat to set quickly. At 250°C the rim rises fully but won\'t char — still a beautiful open crumb.',
     },
@@ -189,9 +189,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '24–72 hours @ 4°C',
       ballRT: '3–4 hours @ 22°C',
       ballCold: '12–24 hours @ 4°C (optional)',
-      bakeTemp: '260°C – 280°C (Baking Steel / Deck)',
+      bakeTemp: '260°C – 280°C (Baking Steel / deck oven)',
       bakeTime: '6–9 minutes',
-      bakeTempHome: '240–250°C (max) — Baking Steel, unterste Schiene, 1h preheat',
+      bakeTempHome: '240–250°C max — Baking Steel, bottom rack, 1h preheat',
       bakeTimeHome: '8–11 min',
       homeNote: 'NY Style works well at home. The sugar/oil aid Maillard browning even at lower temps.',
     },
@@ -225,9 +225,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '24–48 hours @ 4°C',
       ballRT: '3–4 hours @ 21°C',
       ballCold: '0 hours',
-      bakeTemp: '250°C (Ober-/Unterhitze + Heißluft, blauer Stahlblech)',
+      bakeTemp: '250°C (top+bottom heat + convection, blue steel pan)',
       bakeTime: '12–15 minutes',
-      bakeTempHome: '250°C (Ober-/Unterhitze + Heißluft, blauer Stahlblech)',
+      bakeTempHome: '250°C (top+bottom heat + convection, blue steel pan)',
       bakeTimeHome: '12–15 minutes',
     },
     steps: [
@@ -262,7 +262,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       ballCold: '0 hours',
       bakeTemp: '300°C – 330°C (Baking Steel / Effeuno)',
       bakeTime: '3–4 minutes',
-      bakeTempHome: '250°C max — Baking Steel, oberste Schiene, 1h preheat',
+      bakeTempHome: '250°C max — Baking Steel, top rack, 1h preheat',
       bakeTimeHome: '5–7 min',
       homeNote: 'Tonda is best at 300°C+. At 250°C the cracker-crispness is slightly softer — roll even thinner (< 1mm) to compensate.',
     },
@@ -296,9 +296,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '24–48 hours @ 4°C',
       ballRT: '3 hours in oiled pan @ 24°C',
       ballCold: '0 hours',
-      bakeTemp: '250°C (Ober-/Unterhitze, unterste Schiene)',
+      bakeTemp: '250°C (top+bottom heat, bottom rack)',
       bakeTime: '12–15 minutes',
-      bakeTempHome: '250°C (Ober-/Unterhitze, unterste Schiene)',
+      bakeTempHome: '250°C (top+bottom heat, bottom rack)',
       bakeTimeHome: '12–15 minutes',
     },
     steps: [
@@ -308,7 +308,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       'Transfer to fridge (4°C) for 24–48 hours to fully digest starch bonds.',
       'Coat a 10×14 heavy pan with 2 tbsp olive oil. Press dough outward until it touches all four corners.',
       'Proof uncovered in a warm kitchen for 3 hours until double in thickness and bubbly.',
-      'Lay Butterkäse or Mozzarella-Cheddar all the way to the edges. Add two parallel lines of thick tomato sauce.',
+      'Lay mild cheese (Butterkäse or Mozzarella-Cheddar blend) all the way to the edges. Add two parallel lines of thick tomato sauce.',
       'Bake on lowest rack 12–15 min until bottom is fried and cheese edges are caramelized.',
     ],
   },
@@ -331,9 +331,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '0 hours',
       ballRT: '1 hour @ 22°C',
       ballCold: '0 hours',
-      bakeTemp: '275°C – 300°C (Ober-/Unterhitze + Baking Steel)',
+      bakeTemp: '275°C – 300°C (top+bottom heat + Baking Steel)',
       bakeTime: '4–5 minutes',
-      bakeTempHome: '250°C max — Ober-/Unterhitze + Baking Steel, oberste Schiene',
+      bakeTempHome: '250°C max — top+bottom heat + Baking Steel, top rack',
       bakeTimeHome: '6–9 min',
       homeNote: 'At 250°C edges won\'t bubble black — still crisp and delicious, just less dramatic char. Roll it paper-thin.',
     },
@@ -343,8 +343,8 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       'Cover on counter for 1 hour at room temp — resting relaxes gluten so you can roll paper-thin without spring-back.',
       'Slice into 150–160g portions. Roll into smooth, dry spheres. Rest covered 45 min more.',
       'Roll from center outwards with a rolling pin until ultra-thin (< 1.5mm) and translucent.',
-      'Spread salted Schmand (or thick Creme Fraiche) with nutmeg and pepper. Top with Spekwürfel and sliced red onion.',
-      'Slide onto preheated baking steel on oven\'s top rack at 275–300°C. Cook 4–5 min until edges bubble black and crust is rigid.',
+      'Spread crème fraîche (or thick sour cream) seasoned with nutmeg and pepper. Top with diced smoked bacon and sliced red onion.',
+      'Slide onto preheated baking steel on oven\'s top rack. Cook 4–5 min until edges bubble and char and crust is completely rigid.',
     ],
   },
   {
@@ -366,9 +366,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       bulkCold: '18–24 hours @ 4°C',
       ballRT: '3 hours on baking sheet @ 22°C',
       ballCold: '0 hours',
-      bakeTemp: '220°C – 230°C (Ober-/Unterhitze)',
+      bakeTemp: '220°C – 230°C (top+bottom heat)',
       bakeTime: '15–20 minutes',
-      bakeTempHome: '220°C – 230°C (Ober-/Unterhitze, mittlere Schiene)',
+      bakeTempHome: '220°C – 230°C (top+bottom heat, middle rack)',
       bakeTimeHome: '15–20 minutes',
     },
     steps: [
@@ -403,7 +403,7 @@ export const FLOUR_TYPES: FlourType[] = [
   {
     id: 'typ00_import',
     name: 'Imported Italian Tipo 00',
-    germanLabel: 'Tipo 00 (Import)',
+    germanLabel: 'Tipo 00 (Imported)',
     wValue: 'W280–350',
     wMin: 280, wMax: 350,
     proteinRange: '12.5–13.5%',
@@ -415,7 +415,7 @@ export const FLOUR_TYPES: FlourType[] = [
   {
     id: 'typ00_supermarket',
     name: 'German Supermarket Tipo 00',
-    germanLabel: 'Tipo 00 (Supermarkt)',
+    germanLabel: 'Tipo 00 (Supermarket)',
     wValue: 'W180–220',
     wMin: 180, wMax: 220,
     proteinRange: '10.5–11.5%',
@@ -426,8 +426,8 @@ export const FLOUR_TYPES: FlourType[] = [
   },
   {
     id: 'typ550',
-    name: 'Weizenmehl Type 550',
-    germanLabel: 'Weizenmehl Typ 550',
+    name: 'Wheat Flour Type 550',
+    germanLabel: 'Wheat Flour Type 550',
     wValue: 'W230–280',
     wMin: 230, wMax: 280,
     proteinRange: '11.5–12.8%',
@@ -438,8 +438,8 @@ export const FLOUR_TYPES: FlourType[] = [
   },
   {
     id: 'typ630',
-    name: 'Dinkelmehl Type 630 (Spelt)',
-    germanLabel: 'Dinkelmehl Typ 630',
+    name: 'Spelt Flour Type 630',
+    germanLabel: 'Spelt Flour Type 630',
     wValue: 'W150–200',
     wMin: 150, wMax: 200,
     proteinRange: '12.5–14.0%',
@@ -450,15 +450,15 @@ export const FLOUR_TYPES: FlourType[] = [
   },
   {
     id: 'typ405',
-    name: 'Weizenmehl Type 405',
-    germanLabel: 'Weizenmehl Typ 405',
+    name: 'Wheat Flour Type 405',
+    germanLabel: 'Wheat Flour Type 405',
     wValue: 'W100–160',
     wMin: 100, wMax: 160,
     proteinRange: '9.0–10.5%',
     proteinMin: 9.0, proteinMax: 10.5,
     recommendedHydration: { min: 55, max: 58 },
     description: 'German standard cake & pastry flour. Low protein content and weak gluten elasticity.',
-    alterationTip: 'Poor absorption — hydration above 58% turns Typ 405 into sticky mush. Restrict to 55–58% or use Aurora Pizzamehl Typ 405 with added Weizenkleber.',
+    alterationTip: 'Poor absorption — hydration above 58% turns Type 405 into sticky mush. Restrict to 55–58%. Best mixed with a stronger bread flour for pizza use.',
   },
 ];
 
@@ -505,7 +505,6 @@ export default function DoughCalculator({
   const [showAdvanced, setShowAdvanced]       = useState(false);
   const [showOil, setShowOil]                 = useState(false);
   const [showSugar, setShowSugar]             = useState(false);
-  const [activeMixerTab, setActiveMixerTab]   = useState<'stand' | 'spiral' | 'hand'>('stand');
   const [activeGermanTab, setActiveGermanTab] = useState<'flour' | 'oven'>('flour');
   const [blendEnabled, setBlendEnabled]       = useState(false);
   const [blendSecondId, setBlendSecondId]     = useState<string>('typ550');
@@ -726,7 +725,7 @@ export default function DoughCalculator({
 
           {/* ── 02: Flour ── */}
           <div className="p-5 border-b border-slate-200">
-            <StepHeader num="02" title="Flour · Mehl" sub="hydration auto-adjusts to flour's safe range" />
+            <StepHeader num="02" title="Flour" sub="hydration auto-adjusts to flour's safe range" />
             <div className="grid grid-cols-1 gap-1.5">
               {FLOUR_TYPES.map((f) => {
                 const isActive = selectedFlourId === f.id;
@@ -971,8 +970,8 @@ export default function DoughCalculator({
             <StepHeader num="05" title="Oven Type" sub="adapts bake temp + time for your setup" />
             <div className="flex gap-1.5">
               {([
-                { id: 'home' as const, label: 'Home Backofen', sub: '≤ 250°C max' },
-                { id: 'pro'  as const, label: 'High Heat',     sub: 'Steel 280°C+ / Holzofen / Effeuno' },
+                { id: 'home' as const, label: 'Home Oven', sub: '≤ 250°C max' },
+                { id: 'pro'  as const, label: 'High Heat',     sub: 'Steel 280°C+ / Wood-fired / Effeuno' },
               ]).map((opt) => {
                 const isActive = ovenType === opt.id;
                 return (
@@ -1256,8 +1255,8 @@ export default function DoughCalculator({
             </div>
             <div className="flex bg-slate-100 p-0.5 border-2 border-slate-900">
               {(['stand', 'spiral', 'hand'] as const).map((tab) => (
-                <button key={tab} onClick={() => setActiveMixerTab(tab)}
-                  className={`px-3 py-1 text-[10px] font-black uppercase transition-all ${activeMixerTab === tab ? 'bg-slate-900 text-white' : 'text-slate-600 hover:text-slate-900'}`}>
+                <button key={tab} onClick={() => onMixerChange(tab)}
+                  className={`px-3 py-1 text-[10px] font-black uppercase transition-all ${selectedMixer === tab ? 'bg-slate-900 text-white' : 'text-slate-600 hover:text-slate-900'}`}>
                   {tab === 'stand' ? 'Stand' : tab === 'spiral' ? 'Spiral' : 'Hand'}
                 </button>
               ))}
@@ -1266,7 +1265,7 @@ export default function DoughCalculator({
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             <div className="lg:col-span-7 text-[11px] text-slate-700 font-sans leading-relaxed space-y-3">
-              {activeMixerTab === 'stand' && (<>
+              {selectedMixer === 'stand' && (<>
                 <div className="bg-slate-100 border-l-4 border-[#E60012] p-3 font-mono text-[10px]">
                   <b>Stand Mixer (Planetary)</b> — Bowl static; hook spins on its axis + travels the bowl circumference. FDT friction: <span className="text-[#E60012] font-black">+6.5°C</span>
                 </div>
@@ -1277,7 +1276,7 @@ export default function DoughCalculator({
                   <b className="text-[#E60012]">⚠ SilverCrest / Budget Double-Hook Mixers:</b> Two interlocking hooks shred gluten 40% faster — reduce kneading to max 5–6 min. Never above Speed 1. Use ice-cold water — plastic body insulates motor heat into dough.
                 </div>
               </>)}
-              {activeMixerTab === 'spiral' && (<>
+              {selectedMixer === 'spiral' && (<>
                 <div className="bg-slate-100 border-l-4 border-[#E60012] p-3 font-mono text-[10px]">
                   <b>Spiral Mixer (Professional)</b> — Hook AND bowl both rotate in opposite directions. Continuous forced protein alignment. FDT friction: <span className="text-[#E60012] font-black">+10°C</span>
                 </div>
@@ -1285,7 +1284,7 @@ export default function DoughCalculator({
                 <p><b>B:</b> Add salt. Speed 2 (180–240 RPM) for high hydration. Drip remaining 15% via bassinage.</p>
                 <p><b>C:</b> Knead until dough is extremely glossy and stretches around the central column. Total: 8–10 min.</p>
               </>)}
-              {activeMixerTab === 'hand' && (<>
+              {selectedMixer === 'hand' && (<>
                 <div className="bg-slate-100 border-l-4 border-[#E60012] p-3 font-mono text-[10px]">
                   <b>By Hand</b> — Thumbs, palms, and wrists. Least friction heat. Maximum tactile feedback. FDT friction: <span className="text-[#E60012] font-black">+3°C</span>
                 </div>
@@ -1317,10 +1316,10 @@ export default function DoughCalculator({
         <div className="bg-white border-4 border-slate-900 p-6 brutalist-shadow-lg">
           <div className="border-b-2 border-slate-900 pb-3 mb-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
             <div>
-              <span className="text-[9px] text-[#E60012] font-black uppercase tracking-widest font-mono block">Lokale Anpassung</span>
+              <span className="text-[9px] text-[#E60012] font-black uppercase tracking-widest font-mono block">Flour &amp; Oven Reference</span>
               <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-[#E60012]" />
-                German Flour &amp; Oven Calibration
+                Flour &amp; Oven Calibration Guide
               </h3>
             </div>
             <div className="flex bg-slate-100 p-0.5 border-2 border-slate-900">
@@ -1354,12 +1353,12 @@ export default function DoughCalculator({
           {activeGermanTab === 'oven' && (
             <div className="space-y-2.5 text-[11px] text-slate-700 font-sans leading-relaxed">
               <div className="bg-slate-100 border-l-4 border-[#E60012] p-3 font-mono text-[10px]">
-                <b>German home ovens (Bosch, Siemens, Miele)</b> max at 250–275°C. Neapolitan needs 450°C. Use these three tactics:
+                <b>Standard home ovens (Bosch, Siemens, Miele, etc.)</b> max at 250–275°C. Neapolitan needs 450°C. Use these three tactics to close the gap:
               </div>
               {[
-                { title: 'Tactic 1: Baking Steel (Backstahl)', body: 'Get a 6–8mm heavy baking steel. Place on the highest rack. Pre-heat on Ober-/Unterhitze 275°C for 45–60 min to fully saturate with heat. Do NOT use thin ceramic stones — insufficient heat transfer.' },
-                { title: 'Tactic 2: Grill/Broiler Bypass', body: 'Right before loading your pizza, switch to Grill (Grillstufe 3 / Maximum). Pre-heated steel bakes the bottom in 2 min; active grill chars and blisters the top. Total: 3–4 min.' },
-                { title: 'Tactic 3: Browning Additives', body: 'Domestic ovens bake slower (3–6 min vs 90s), so dough dries before browning. Add 1–1.5% diastatic barley malt (Backmalz) or sugar to speed up Maillard reaction at 250°C. Add 2–3% olive oil to lock internal moisture.' },
+                { title: 'Tactic 1: Baking Steel', body: 'Get a 6–8mm thick baking steel. Place on the highest rack. Pre-heat at 275°C (top+bottom heat) for 45–60 min to fully saturate with heat. Do NOT use thin ceramic stones — they transfer heat too slowly.' },
+                { title: 'Tactic 2: Grill/Broiler Finish', body: 'Right before loading your pizza, switch to Grill/Broiler at maximum setting. The pre-heated steel bakes the bottom in 2 min; the active grill chars and blisters the top. Total bake time: 3–4 min.' },
+                { title: 'Tactic 3: Browning Additives', body: 'Home ovens bake slower (3–6 min vs 90s), so dough dries out before browning. Add 1–1.5% diastatic barley malt or sugar to accelerate the Maillard reaction at 250°C. Add 2–3% olive oil to lock in internal moisture.' },
               ].map(({ title, body }) => (
                 <div key={title} className="p-3 border-2 border-slate-900 bg-slate-50">
                   <h4 className="text-[10px] font-black uppercase font-mono mb-1">{title}</h4>
