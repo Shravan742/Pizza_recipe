@@ -34,6 +34,8 @@ export default function App() {
     saltPercent: 2.5,
     yeastPercent: 0.13,
     yeastType: 'dry',
+    oilPercent: 0,
+    sugarPercent: 0,
   });
 
   const [waterTemp, setWaterTemp] = useState<number>(15);

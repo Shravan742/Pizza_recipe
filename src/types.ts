@@ -10,6 +10,8 @@ export interface PizzaRecipe {
   saltPercent: number; // in %, e.g., 2.5
   yeastPercent: number; // in %, e.g., 0.13
   yeastType: 'dry' | 'fresh';
+  oilPercent: number;   // in %, e.g., 2 (olive oil — baker's %)
+  sugarPercent: number; // in %, e.g., 1 (sugar or diastatic malt — baker's %)
 }
 
 export type MixingMethodType = 'hand' | 'stand' | 'spiral' | 'custom';
