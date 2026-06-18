@@ -146,6 +146,8 @@ export default function LabJournal({ currentRecipe, calculatedWaterTemp }: LabJo
         saltPercent,
         yeastPercent,
         yeastType,
+        oilPercent: 0,
+        sugarPercent: 0,
       },
       calculatedWaterTemp,
       actualWaterTemp: waterTemp,

@@ -7,8 +7,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { PizzaRecipe, MixingMethodType } from '../types';
 import DoughProcess3D from './DoughProcess3D';
 import {
-  Scale, RefreshCw, Layers, CheckCircle2, Play,
-  BookOpen, Clock, Sparkles, Info, ChevronDown, ChevronUp,
+  Scale, RefreshCw, Layers, Play,
+  BookOpen, Clock, Sparkles, Info, ChevronDown, ChevronUp, Layers2,
 } from 'lucide-react';
 
 interface DoughCalculatorProps {
@@ -348,7 +348,11 @@ export interface FlourType {
   name: string;
   germanLabel: string;
   wValue: string;
+  wMin: number;
+  wMax: number;
   proteinRange: string;
+  proteinMin: number;
+  proteinMax: number;
   recommendedHydration: { min: number; max: number };
   description: string;
   alterationTip: string;
@@ -360,7 +364,9 @@ export const FLOUR_TYPES: FlourType[] = [
     name: 'Imported Italian Tipo 00',
     germanLabel: 'Tipo 00 (Import)',
     wValue: 'W280–350',
+    wMin: 280, wMax: 350,
     proteinRange: '12.5–13.5%',
+    proteinMin: 12.5, proteinMax: 13.5,
     recommendedHydration: { min: 62, max: 70 },
     description: 'Elite high-strength imported Italian specialty flour (Caputo, 5 Stagioni). Strong, elastic gluten for high-temperature ovens.',
     alterationTip: 'Perfect for Neapolitan. Safely supports hydration up to 70%. Kneads beautifully and tolerates long fermentation.',
@@ -370,7 +376,9 @@ export const FLOUR_TYPES: FlourType[] = [
     name: 'German Supermarket Tipo 00',
     germanLabel: 'Tipo 00 (Supermarkt)',
     wValue: 'W180–220',
+    wMin: 180, wMax: 220,
     proteinRange: '10.5–11.5%',
+    proteinMin: 10.5, proteinMax: 11.5,
     recommendedHydration: { min: 58, max: 62 },
     description: 'Domestic German supermarket pizza flour (Aurora, Diamant, K-Classic, Gut & Günstig). Standard gluten framework.',
     alterationTip: 'Lower W-value than Italian imports. Limit hydration to 58–62% to avoid sticky, unworkable dough.',
@@ -380,7 +388,9 @@ export const FLOUR_TYPES: FlourType[] = [
     name: 'Weizenmehl Type 550',
     germanLabel: 'Weizenmehl Typ 550',
     wValue: 'W230–280',
+    wMin: 230, wMax: 280,
     proteinRange: '11.5–12.8%',
+    proteinMin: 11.5, proteinMax: 12.8,
     recommendedHydration: { min: 60, max: 64 },
     description: 'Standard German bread flour (Aurora, Diamant). Excellent gluten strength. Found in every German supermarket.',
     alterationTip: 'Very reliable. Safe hydration: 60–64%. Going above 64% needs bassinage (dripping water slowly) or folding.',
@@ -390,7 +400,9 @@ export const FLOUR_TYPES: FlourType[] = [
     name: 'Dinkelmehl Type 630 (Spelt)',
     germanLabel: 'Dinkelmehl Typ 630',
     wValue: 'W150–200',
+    wMin: 150, wMax: 200,
     proteinRange: '12.5–14.0%',
+    proteinMin: 12.5, proteinMax: 14.0,
     recommendedHydration: { min: 58, max: 60 },
     description: 'Organic spelt wheat (dm-Bio, Alnatura). High protein but fragile extensible gluten that slacks quickly.',
     alterationTip: 'Spelt gluten tears under heavy kneading. Cut kneading time in half or use hand-only. Keep hydration ≤60%.',
@@ -400,7 +412,9 @@ export const FLOUR_TYPES: FlourType[] = [
     name: 'Weizenmehl Type 405',
     germanLabel: 'Weizenmehl Typ 405',
     wValue: 'W100–160',
+    wMin: 100, wMax: 160,
     proteinRange: '9.0–10.5%',
+    proteinMin: 9.0, proteinMax: 10.5,
     recommendedHydration: { min: 55, max: 58 },
     description: 'German standard cake & pastry flour. Low protein content and weak gluten elasticity.',
     alterationTip: 'Poor absorption — hydration above 58% turns Typ 405 into sticky mush. Restrict to 55–58% or use Aurora Pizzamehl Typ 405 with added Weizenkleber.',
@@ -452,11 +466,33 @@ export default function DoughCalculator({
   const [showSugar, setShowSugar]             = useState(false);
   const [activeMixerTab, setActiveMixerTab]   = useState<'stand' | 'spiral' | 'hand'>('stand');
   const [activeGermanTab, setActiveGermanTab] = useState<'flour' | 'oven'>('flour');
+  const [blendEnabled, setBlendEnabled]       = useState(false);
+  const [blendSecondId, setBlendSecondId]     = useState<string>('typ550');
+  const [blendPrimaryPct, setBlendPrimaryPct] = useState<number>(70);
 
   // Tracks the base ball weight of the last explicitly chosen preset (used for S/M/L scaling)
   const baseBallWeightRef = useRef<number>(280);
 
-  const selectedFlour = FLOUR_TYPES.find(f => f.id === selectedFlourId) || FLOUR_TYPES[0];
+  const primaryFlour = FLOUR_TYPES.find(f => f.id === selectedFlourId) || FLOUR_TYPES[0];
+  const secondFlour  = FLOUR_TYPES.find(f => f.id === blendSecondId)   || FLOUR_TYPES[2];
+  const secondPct    = 100 - blendPrimaryPct;
+
+  // Effective (possibly blended) flour properties used for hydration clamping + display
+  const selectedFlour: FlourType = blendEnabled ? {
+    ...primaryFlour,
+    wValue: `W${Math.round((primaryFlour.wMin * blendPrimaryPct + secondFlour.wMin * secondPct) / 100)}–${Math.round((primaryFlour.wMax * blendPrimaryPct + secondFlour.wMax * secondPct) / 100)}`,
+    wMin: Math.round((primaryFlour.wMin * blendPrimaryPct + secondFlour.wMin * secondPct) / 100),
+    wMax: Math.round((primaryFlour.wMax * blendPrimaryPct + secondFlour.wMax * secondPct) / 100),
+    proteinRange: `${((primaryFlour.proteinMin * blendPrimaryPct + secondFlour.proteinMin * secondPct) / 100).toFixed(1)}–${((primaryFlour.proteinMax * blendPrimaryPct + secondFlour.proteinMax * secondPct) / 100).toFixed(1)}%`,
+    proteinMin: (primaryFlour.proteinMin * blendPrimaryPct + secondFlour.proteinMin * secondPct) / 100,
+    proteinMax: (primaryFlour.proteinMax * blendPrimaryPct + secondFlour.proteinMax * secondPct) / 100,
+    recommendedHydration: {
+      min: Math.round((primaryFlour.recommendedHydration.min * blendPrimaryPct + secondFlour.recommendedHydration.min * secondPct) / 100),
+      max: Math.round((primaryFlour.recommendedHydration.max * blendPrimaryPct + secondFlour.recommendedHydration.max * secondPct) / 100),
+    },
+    germanLabel: `${blendPrimaryPct}% ${primaryFlour.germanLabel} + ${secondPct}% ${secondFlour.germanLabel}`,
+    alterationTip: `Blend: ${primaryFlour.alterationTip} / ${secondFlour.alterationTip}`,
+  } : primaryFlour;
 
   // ── Auto-calculate the best hydration for a given preset + flour combination ──
   const clampHydration = (raw: number, flour: FlourType) =>
@@ -493,11 +529,20 @@ export default function DoughCalculator({
   // ── Select flour → auto-clamp hydration immediately, no warnings ──
   const handleSelectFlour = (flourId: string) => {
     setSelectedFlourId(flourId);
-    const flour = FLOUR_TYPES.find(f => f.id === flourId)!;
-    const clamped = clampHydration(hydration, flour);
-    if (clamped !== hydration) {
-      onChange({ ...recipe, hydration: clamped });
+    // If second flour of a blend is the same as the new primary, swap to the first available different one
+    if (blendEnabled && blendSecondId === flourId) {
+      const fallback = FLOUR_TYPES.find(f => f.id !== flourId);
+      if (fallback) setBlendSecondId(fallback.id);
     }
+    const newPrimary = FLOUR_TYPES.find(f => f.id === flourId)!;
+    const effectiveMin = blendEnabled
+      ? Math.round((newPrimary.recommendedHydration.min * blendPrimaryPct + secondFlour.recommendedHydration.min * (100 - blendPrimaryPct)) / 100)
+      : newPrimary.recommendedHydration.min;
+    const effectiveMax = blendEnabled
+      ? Math.round((newPrimary.recommendedHydration.max * blendPrimaryPct + secondFlour.recommendedHydration.max * (100 - blendPrimaryPct)) / 100)
+      : newPrimary.recommendedHydration.max;
+    const clamped = Math.min(effectiveMax, Math.max(effectiveMin, hydration));
+    if (clamped !== hydration) onChange({ ...recipe, hydration: clamped });
   };
 
   // ── Pizza size (S / M / L) scales ball weight relative to preset default ──
@@ -510,8 +555,10 @@ export default function DoughCalculator({
 
   // ── Sync activePresetId highlight when user fine-tunes in Advanced ──
   useEffect(() => {
+    const { min, max } = selectedFlour.recommendedHydration;
+    const clamp = (v: number) => Math.min(max, Math.max(min, v));
     const match = PIZZA_PRESETS.find(p =>
-      hydration    === clampHydration(p.hydration, selectedFlour) &&
+      hydration    === clamp(p.hydration) &&
       saltPercent  === p.saltPercent &&
       yeastPercent === p.yeastPercent &&
       yeastType    === p.yeastType &&
@@ -519,7 +566,8 @@ export default function DoughCalculator({
       sugarPercent === p.sugarPercent
     );
     setActivePresetId(match ? match.id : 'custom');
-  }, [hydration, saltPercent, yeastPercent, yeastType, oilPercent, sugarPercent, selectedFlour]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydration, saltPercent, yeastPercent, yeastType, oilPercent, sugarPercent, selectedFlourId, blendEnabled, blendSecondId, blendPrimaryPct]);
 
   const updateField = <K extends keyof PizzaRecipe>(field: K, value: PizzaRecipe[K]) =>
     onChange({ ...recipe, [field]: value });
@@ -545,12 +593,12 @@ export default function DoughCalculator({
   const weights = calculateWeights();
   const activePreset = PIZZA_PRESETS.find(p => p.id === displayPresetId);
 
-  // What the optimal hydration would be for current flour + currently displayed preset
-  const optimalHydrationNote = (() => {
-    if (!activePreset) return null;
-    const optimal = clampHydration(activePreset.hydration, selectedFlour);
-    const wasAdjusted = optimal !== activePreset.hydration;
-    return { optimal, wasAdjusted };
+  // Status: is the current hydration safe for the currently selected flour?
+  const hydrationRangeStatus = (() => {
+    const { min, max } = selectedFlour.recommendedHydration;
+    if (hydration < min) return { ok: false, msg: `⚡ ${hydration}% is below the ${min}% minimum — raise it or switch flour` };
+    if (hydration > max) return { ok: false, msg: `⚡ ${hydration}% exceeds ${max}% safe max for this flour — may tear or stick` };
+    return { ok: true, msg: `✓ ${hydration}% is within safe range (${min}–${max}%) for ${selectedFlour.germanLabel}` };
   })();
 
   return (
@@ -638,20 +686,114 @@ export default function DoughCalculator({
                 );
               })}
             </div>
-            {/* Auto-adjust status */}
-            {optimalHydrationNote && (
-              <div className={`mt-2 px-2.5 py-1.5 flex items-center gap-1.5 border text-[9px] font-mono font-bold ${
-                optimalHydrationNote.wasAdjusted
-                  ? 'bg-amber-50 border-amber-400 text-amber-800'
-                  : 'bg-emerald-50 border-emerald-400 text-emerald-800'
-              }`}>
-                {optimalHydrationNote.wasAdjusted ? '⚡' : '✓'}
-                {optimalHydrationNote.wasAdjusted
-                  ? `Hydration auto-adjusted to ${optimalHydrationNote.optimal}% for ${selectedFlour.germanLabel}`
-                  : `${hydration}% hydration optimal for ${selectedFlour.germanLabel}`
-                }
-              </div>
-            )}
+            {/* Hydration range status — always visible */}
+            <div className={`mt-2 px-2.5 py-1.5 flex items-center gap-1.5 border text-[9px] font-mono font-bold ${
+              hydrationRangeStatus.ok
+                ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
+                : 'bg-amber-50 border-amber-400 text-amber-800'
+            }`}>
+              {hydrationRangeStatus.msg}
+            </div>
+
+            {/* ── Flour blend toggle ── */}
+            <div className="mt-3 border-t border-slate-100 pt-3">
+              <button
+                onClick={() => {
+                  const next = !blendEnabled;
+                  setBlendEnabled(next);
+                  if (next) {
+                    // Re-clamp hydration to blended range when blend is switched on
+                    const secondF = FLOUR_TYPES.find(f => f.id === blendSecondId) || FLOUR_TYPES[2];
+                    const blendedMin = Math.round((primaryFlour.recommendedHydration.min * blendPrimaryPct + secondF.recommendedHydration.min * (100 - blendPrimaryPct)) / 100);
+                    const blendedMax = Math.round((primaryFlour.recommendedHydration.max * blendPrimaryPct + secondF.recommendedHydration.max * (100 - blendPrimaryPct)) / 100);
+                    const clamped = Math.min(blendedMax, Math.max(blendedMin, hydration));
+                    if (clamped !== hydration) onChange({ ...recipe, hydration: clamped });
+                  } else {
+                    // Re-clamp to single flour range when blend disabled
+                    const clamped = clampHydration(hydration, primaryFlour);
+                    if (clamped !== hydration) onChange({ ...recipe, hydration: clamped });
+                  }
+                }}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 border text-[9px] font-black uppercase tracking-widest transition-all ${
+                  blendEnabled
+                    ? 'bg-slate-900 border-slate-900 text-white'
+                    : 'bg-slate-50 border-slate-300 text-slate-600 hover:border-slate-700'
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Layers2 className="w-3 h-3" />
+                  Blend Two Flours
+                </span>
+                <span className={`text-[8px] font-mono ${blendEnabled ? 'text-white/60' : 'text-slate-400'}`}>
+                  {blendEnabled ? 'ON — click to disable' : 'optional'}
+                </span>
+              </button>
+
+              {blendEnabled && (
+                <div className="mt-2.5 space-y-2.5 bg-slate-50 border border-slate-200 p-3">
+                  {/* Second flour picker */}
+                  <div>
+                    <span className="text-[9px] font-mono text-slate-500 uppercase block mb-1.5">Second flour</span>
+                    <div className="flex flex-col gap-1">
+                      {FLOUR_TYPES.filter(f => f.id !== selectedFlourId).map(f => (
+                        <button
+                          key={f.id}
+                          onClick={() => {
+                            setBlendSecondId(f.id);
+                            const bMin = Math.round((primaryFlour.recommendedHydration.min * blendPrimaryPct + f.recommendedHydration.min * (100 - blendPrimaryPct)) / 100);
+                            const bMax = Math.round((primaryFlour.recommendedHydration.max * blendPrimaryPct + f.recommendedHydration.max * (100 - blendPrimaryPct)) / 100);
+                            const clamped = Math.min(bMax, Math.max(bMin, hydration));
+                            if (clamped !== hydration) onChange({ ...recipe, hydration: clamped });
+                          }}
+                          className={`px-2.5 py-1.5 text-left border-2 rounded-none transition-all flex items-center justify-between gap-2 ${
+                            blendSecondId === f.id
+                              ? 'bg-slate-900 border-slate-900 text-white'
+                              : 'bg-white border-slate-200 text-slate-700 hover:border-slate-600'
+                          }`}
+                        >
+                          <span className="text-[9px] font-black uppercase truncate">{f.germanLabel}</span>
+                          <span className={`text-[9px] font-mono shrink-0 ${blendSecondId === f.id ? 'text-[#E60012]' : 'text-slate-500'}`}>{f.wValue}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Ratio slider */}
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[9px] font-mono text-slate-500 uppercase">Ratio</span>
+                      <span className="text-[9px] font-black font-mono text-slate-900">
+                        {blendPrimaryPct}% / {100 - blendPrimaryPct}%
+                      </span>
+                    </div>
+                    <input
+                      type="range" min={10} max={90} step={5} value={blendPrimaryPct}
+                      onChange={e => {
+                        const pct = parseInt(e.target.value);
+                        setBlendPrimaryPct(pct);
+                        const secondF = FLOUR_TYPES.find(f => f.id === blendSecondId) || FLOUR_TYPES[2];
+                        const bMin = Math.round((primaryFlour.recommendedHydration.min * pct + secondF.recommendedHydration.min * (100 - pct)) / 100);
+                        const bMax = Math.round((primaryFlour.recommendedHydration.max * pct + secondF.recommendedHydration.max * (100 - pct)) / 100);
+                        const clamped = Math.min(bMax, Math.max(bMin, hydration));
+                        if (clamped !== hydration) onChange({ ...recipe, hydration: clamped });
+                      }}
+                      className="w-full h-1.5 bg-slate-200 appearance-none cursor-pointer rounded-none"
+                    />
+                    <div className="flex justify-between text-[8px] font-mono text-slate-400 mt-0.5">
+                      <span>{primaryFlour.germanLabel}</span>
+                      <span>{secondFlour.germanLabel}</span>
+                    </div>
+                  </div>
+
+                  {/* Blended properties summary */}
+                  <div className="bg-white border border-slate-900 p-2 font-mono text-[9px] space-y-0.5">
+                    <div className="flex justify-between"><span className="text-slate-500">Blended W-value</span><span className="font-black text-[#E60012]">{selectedFlour.wValue}</span></div>
+                    <div className="flex justify-between"><span className="text-slate-500">Blended protein</span><span className="font-black">{selectedFlour.proteinRange}</span></div>
+                    <div className="flex justify-between"><span className="text-slate-500">Safe hydration</span><span className="font-black">{selectedFlour.recommendedHydration.min}–{selectedFlour.recommendedHydration.max}%</span></div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* ── 03: Batch size ── */}
@@ -874,7 +1016,29 @@ export default function DoughCalculator({
               Ingredient Weights
             </h4>
             <div className="grid grid-cols-2 gap-2.5">
-              <WeightCard label="Flour" sublabel={`${selectedFlour.germanLabel} · ${selectedFlour.wValue}`} value={`${weights.flour}g`} />
+              {blendEnabled ? (
+                <div className="col-span-2 border-2 border-slate-900 bg-slate-50 p-3 brutalist-shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[9px] font-mono font-bold uppercase text-slate-500">Flour Blend</span>
+                    <span className="text-lg font-black font-mono text-slate-900 select-all">{weights.flour}g total</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[9px] font-mono text-slate-700">{blendPrimaryPct}% {primaryFlour.germanLabel}</span>
+                      <span className="text-[10px] font-black font-mono text-slate-900 select-all">{Math.round(weights.flour * blendPrimaryPct / 100)}g</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[9px] font-mono text-slate-700">{100 - blendPrimaryPct}% {secondFlour.germanLabel}</span>
+                      <span className="text-[10px] font-black font-mono text-slate-900 select-all">{Math.round(weights.flour * (100 - blendPrimaryPct) / 100)}g</span>
+                    </div>
+                    <div className="border-t border-slate-200 pt-1 flex justify-between">
+                      <span className="text-[8px] font-mono text-slate-400">Blended {selectedFlour.wValue} · {selectedFlour.proteinRange} protein</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <WeightCard label="Flour" sublabel={`${selectedFlour.germanLabel} · ${selectedFlour.wValue}`} value={`${weights.flour}g`} />
+              )}
               <WeightCard label="Water" sublabel={`${hydration}% hydration`} value={`${weights.water}g`} note={`${weights.water}ml`} />
               <WeightCard label="Salt" sublabel={`${saltPercent}%`} value={`${weights.salt}g`} />
               <WeightCard label={`Yeast ${yeastType === 'fresh' ? '(Fresh ×3.07)' : '(Dry)'}`} sublabel={`${yeastPercent}% ref`} value={`${weights.yeast}g`} />
