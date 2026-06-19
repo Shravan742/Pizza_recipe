@@ -436,6 +436,7 @@ export interface FlourType {
   id: string;
   name: string;
   germanLabel: string;
+  group: 'German' | 'Italian Import';
   wValue: string;
   wMin: number;
   wMax: number;
@@ -448,65 +449,176 @@ export interface FlourType {
 }
 
 export const FLOUR_TYPES: FlourType[] = [
+  // ── German domestic ──────────────────────────────────────────────────────────
   {
-    id: 'typ00_import',
-    name: 'Imported Italian Tipo 00',
-    germanLabel: 'Tipo 00 (Imported)',
-    wValue: 'W280–350',
-    wMin: 280, wMax: 350,
-    proteinRange: '12.5–13.5%',
-    proteinMin: 12.5, proteinMax: 13.5,
-    recommendedHydration: { min: 62, max: 70 },
-    description: 'Elite high-strength imported Italian specialty flour (Caputo, 5 Stagioni). Strong, elastic gluten for high-temperature ovens.',
-    alterationTip: 'Perfect for Neapolitan. Safely supports hydration up to 70%. Kneads beautifully and tolerates long fermentation.',
-  },
-  {
-    id: 'typ00_supermarket',
-    name: 'German Supermarket Tipo 00',
-    germanLabel: 'Tipo 00 (Supermarket)',
-    wValue: 'W180–220',
-    wMin: 180, wMax: 220,
-    proteinRange: '10.5–11.5%',
-    proteinMin: 10.5, proteinMax: 11.5,
-    recommendedHydration: { min: 58, max: 62 },
-    description: 'Domestic German supermarket pizza flour (Aurora, Diamant, K-Classic, Gut & Günstig). Standard gluten framework.',
-    alterationTip: 'Lower W-value than Italian imports. Limit hydration to 58–62% to avoid sticky, unworkable dough.',
+    id: 'typ405',
+    name: 'Wheat Flour Type 405',
+    germanLabel: 'Weizenmehl Typ 405',
+    group: 'German',
+    wValue: 'W100–150',
+    wMin: 100, wMax: 150,
+    proteinRange: '9.0–10.5%',
+    proteinMin: 9.0, proteinMax: 10.5,
+    recommendedHydration: { min: 55, max: 58 },
+    description: 'German cake & pastry flour (Aurora, Diamant, Aldi, Lidl). Weak gluten — sold everywhere but nearly useless for pizza.',
+    alterationTip: 'Only viable for Flammkuchen. Above 58% hydration it turns to paste. If it\'s all you have, blend 50/50 with Typ 550.',
   },
   {
     id: 'typ550',
     name: 'Wheat Flour Type 550',
-    germanLabel: 'Wheat Flour Type 550',
-    wValue: 'W230–280',
-    wMin: 230, wMax: 280,
-    proteinRange: '11.5–12.8%',
-    proteinMin: 11.5, proteinMax: 12.8,
+    germanLabel: 'Weizenmehl Typ 550',
+    group: 'German',
+    wValue: 'W210–245',
+    wMin: 210, wMax: 245,
+    proteinRange: '11.5–12.2%',
+    proteinMin: 11.5, proteinMax: 12.2,
     recommendedHydration: { min: 60, max: 64 },
-    description: 'Standard German bread flour (Aurora, Diamant). Excellent gluten strength. Found in every German supermarket.',
-    alterationTip: 'Very reliable. Safe hydration: 60–64%. Going above 64% needs bassinage (dripping water slowly) or folding.',
+    description: 'Standard German bread flour (Aurora, Diamant, Gut & Günstig, K-Classic). In every supermarket including Kaufland, Lidl, Aldi, EDEKA.',
+    alterationTip: 'Best all-rounder at this price point. Max 64% hydration or use bassinage. Good for 24–48h cold ferment.',
+  },
+  {
+    id: 'typ550_high',
+    name: 'Wheat Flour Type 550 High-Protein',
+    germanLabel: 'Weizenmehl Typ 550 (Stark)',
+    group: 'German',
+    wValue: 'W250–270',
+    wMin: 250, wMax: 270,
+    proteinRange: '12.3–13.0%',
+    proteinMin: 12.3, proteinMax: 13.0,
+    recommendedHydration: { min: 62, max: 66 },
+    description: 'Premium Typ 550 with ≥12.5% protein (e.g. EDEKA Herzstücke Konditor, some Diamant Brotbackmehl). Noticeably stronger than standard Typ 550.',
+    alterationTip: 'Check the label — if protein ≥12.5g/100g, you have this grade. Handles 62–66% hydration and 48–60h cold ferment well.',
+  },
+  {
+    id: 'typ812',
+    name: 'Wheat Flour Type 812',
+    germanLabel: 'Weizenmehl Typ 812',
+    group: 'German',
+    wValue: 'W230–260',
+    wMin: 230, wMax: 260,
+    proteinRange: '11.5–12.5%',
+    proteinMin: 11.5, proteinMax: 12.5,
+    recommendedHydration: { min: 60, max: 65 },
+    description: 'Medium-dark German bread flour. Slightly higher ash content gives a hint more flavour. Less common — found in EDEKA, Reformhaus, organic stores.',
+    alterationTip: 'Works like Typ 550 for pizza but adds a subtle wheaty note. Keep hydration ≤65%. Good for NY style and focaccia.',
+  },
+  {
+    id: 'typ1050',
+    name: 'Wheat Flour Type 1050',
+    germanLabel: 'Weizenmehl Typ 1050',
+    group: 'German',
+    wValue: 'W200–240',
+    wMin: 200, wMax: 240,
+    proteinRange: '12.0–13.5%',
+    proteinMin: 12.0, proteinMax: 13.5,
+    recommendedHydration: { min: 60, max: 65 },
+    description: 'Dark German bread flour — more bran, darker crumb, nuttier taste. Found in EDEKA, Netto, organic stores. Not traditional for pizza.',
+    alterationTip: 'Bran particles cut gluten strands. Use only for focaccia or Detroit where a rustic flavour is welcome. Blend 70/30 with Typ 550 for pizza.',
   },
   {
     id: 'typ630',
     name: 'Spelt Flour Type 630',
-    germanLabel: 'Spelt Flour Type 630',
+    germanLabel: 'Dinkelmehl Typ 630',
+    group: 'German',
     wValue: 'W150–200',
     wMin: 150, wMax: 200,
     proteinRange: '12.5–14.0%',
     proteinMin: 12.5, proteinMax: 14.0,
     recommendedHydration: { min: 58, max: 60 },
-    description: 'Organic spelt wheat (dm-Bio, Alnatura). High protein but fragile extensible gluten that slacks quickly.',
-    alterationTip: 'Spelt gluten tears under heavy kneading. Cut kneading time in half or use hand-only. Keep hydration ≤60%.',
+    description: 'Organic spelt flour (dm-Bio, Alnatura, Bioland). High protein numbers but fragile gluten — misleading compared to wheat.',
+    alterationTip: 'Spelt gluten tears under heavy kneading — use hand mixing only, half the kneading time. Keep hydration ≤60%. Best for flatbreads.',
   },
   {
-    id: 'typ405',
-    name: 'Wheat Flour Type 405',
-    germanLabel: 'Wheat Flour Type 405',
-    wValue: 'W100–160',
-    wMin: 100, wMax: 160,
-    proteinRange: '9.0–10.5%',
-    proteinMin: 9.0, proteinMax: 10.5,
-    recommendedHydration: { min: 55, max: 58 },
-    description: 'German standard cake & pastry flour. Low protein content and weak gluten elasticity.',
-    alterationTip: 'Poor absorption — hydration above 58% turns Type 405 into sticky mush. Restrict to 55–58%. Best mixed with a stronger bread flour for pizza use.',
+    id: 'typ00_supermarket',
+    name: 'Tipo 00 Supermarket Grade',
+    germanLabel: 'Tipo 00 (Supermarkt)',
+    group: 'German',
+    wValue: 'W180–220',
+    wMin: 180, wMax: 220,
+    proteinRange: '10.5–11.5%',
+    proteinMin: 10.5, proteinMax: 11.5,
+    recommendedHydration: { min: 58, max: 62 },
+    description: 'Italian-labelled 00 flour made/sold in Germany (Aurora Pizza & Pasta, Diamant Pizzamehl). Fine grind but weaker than true Italian imports.',
+    alterationTip: 'Limited to 24h ferment max. Above 62% hydration it gets sticky and tears. Upgrade to Caputo for anything serious.',
+  },
+  // ── Italian imports (available in Germany) ───────────────────────────────────
+  {
+    id: 'caputo_nuvola',
+    name: 'Caputo Nuvola',
+    germanLabel: 'Caputo Nuvola (Tipo 0)',
+    group: 'Italian Import',
+    wValue: 'W260–280',
+    wMin: 260, wMax: 280,
+    proteinRange: '12.5%',
+    proteinMin: 12.5, proteinMax: 12.5,
+    recommendedHydration: { min: 65, max: 72 },
+    description: 'Caputo\'s soft "cloud" flour (Tipo 0, coarser grind). Designed for light, open, airy cornicione. Available on Amazon.de and pizza1.de (~€3/kg).',
+    alterationTip: 'Best for high-hydration Neapolitan and Canotto. Tipo 0 grind means slightly more texture — very forgiving to handle at 70%+.',
+  },
+  {
+    id: 'caputo_pizzeria',
+    name: 'Caputo Pizzeria (Blue)',
+    germanLabel: 'Caputo Pizzeria (Tipo 00)',
+    group: 'Italian Import',
+    wValue: 'W260–280',
+    wMin: 260, wMax: 280,
+    proteinRange: '12.5%',
+    proteinMin: 12.5, proteinMax: 12.5,
+    recommendedHydration: { min: 63, max: 68 },
+    description: 'The classic blue bag — Italy\'s most used Neapolitan pizza flour. Available at REWE online, Kaufland, Amazon.de, pizza1.de (~€2.50/kg).',
+    alterationTip: 'The reference flour for classic Neapolitan. Ideal at 63–65% hydration. Handles 24–48h cold ferment without issues.',
+  },
+  {
+    id: 'caputo_cuoco',
+    name: 'Caputo Cuoco / Saccorosso',
+    germanLabel: 'Caputo Cuoco (Tipo 00)',
+    group: 'Italian Import',
+    wValue: 'W300–320',
+    wMin: 300, wMax: 320,
+    proteinRange: '13.0%',
+    proteinMin: 13.0, proteinMax: 13.0,
+    recommendedHydration: { min: 65, max: 70 },
+    description: 'Professional chef\'s flour (red bag). W300–320 handles 48–72h cold ferment without breaking down. Kaufland stocks it (~€2.80/kg). Also on Amazon.de.',
+    alterationTip: 'Use for Canotto, Tokyo, or any 48h+ protocol. At 65–70% hydration it stays strong. Ideal if you bake weekly and ferment long.',
+  },
+  {
+    id: 'caputo_manitoba',
+    name: 'Caputo Manitoba Oro',
+    germanLabel: 'Caputo Manitoba (Tipo 0)',
+    group: 'Italian Import',
+    wValue: 'W350–380',
+    wMin: 350, wMax: 380,
+    proteinRange: '13.5%',
+    proteinMin: 13.5, proteinMax: 13.5,
+    recommendedHydration: { min: 68, max: 78 },
+    description: 'Extreme-strength flour for very long ferments (72h+) or high-hydration doughs. Available on pizza1.de and Amazon.de (~€3.50/kg).',
+    alterationTip: 'Too strong on its own for standard Neapolitan — blend 70% Cuoco + 30% Manitoba for 72h protocols. Alone it can feel rubbery if under-fermented.',
+  },
+  {
+    id: 'stagioni_napoletana',
+    name: 'Le 5 Stagioni Napoletana',
+    germanLabel: '5 Stagioni Napoletana (00)',
+    group: 'Italian Import',
+    wValue: 'W280–300',
+    wMin: 280, wMax: 300,
+    proteinRange: '13.0%',
+    proteinMin: 13.0, proteinMax: 13.0,
+    recommendedHydration: { min: 63, max: 68 },
+    description: 'Italy\'s no.1 professional pizza brand. Slightly stronger than Caputo Pizzeria. Available on Amazon.de and pizza1.de (~€3/kg).',
+    alterationTip: 'Very consistent batch to batch. Great for Neapolitan at 63–65%. Handles 48h cold ferment well. A step up from Caputo Pizzeria in structure.',
+  },
+  {
+    id: 'stagioni_manitoba',
+    name: 'Le 5 Stagioni Manitoba W410',
+    germanLabel: '5 Stagioni Manitoba (W410)',
+    group: 'Italian Import',
+    wValue: 'W380–410',
+    wMin: 380, wMax: 410,
+    proteinRange: '14.0%',
+    proteinMin: 14.0, proteinMax: 14.0,
+    recommendedHydration: { min: 70, max: 80 },
+    description: 'The strongest commercial pizza/bread flour available. Designed for 72–96h ferment or as a blending agent. Amazon.de (~€4/kg).',
+    alterationTip: 'Never use alone for pizza — blend max 30% with a standard 00. Alone it won\'t relax enough and the rim will be rubbery. Use for extreme Canotto protocols.',
   },
 ];
 
@@ -818,37 +930,44 @@ export default function DoughCalculator({
           {/* ── 02: Flour ── */}
           <div className="p-5 border-b border-slate-200">
             <StepHeader num="02" title="Flour" sub="hydration auto-adjusts to flour's safe range" />
-            <div className="grid grid-cols-1 gap-1.5">
-              {FLOUR_TYPES.map((f) => {
-                const isActive = selectedFlourId === f.id;
-                return (
-                  <button
-                    key={f.id}
-                    onClick={() => handleSelectFlour(f.id)}
-                    className={`px-3 py-2 text-left border-2 rounded-none transition-all flex items-center gap-3 ${
-                      isActive
-                        ? 'bg-slate-900 border-slate-900 text-white'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-700 hover:bg-slate-100'
-                    }`}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-black uppercase tracking-tight block truncate">
-                        {f.germanLabel}
-                      </span>
-                      <span className={`text-[8px] font-mono ${isActive ? 'text-white/50' : 'text-slate-400'}`}>
-                        {f.proteinRange} protein
-                      </span>
-                    </div>
-                    <span className={`text-[11px] font-black font-mono shrink-0 ${isActive ? 'text-[#E60012]' : 'text-slate-700'}`}>
-                      {f.wValue}
-                    </span>
-                    <span className={`text-[8px] font-mono shrink-0 ${isActive ? 'text-white/60' : 'text-slate-400'}`}>
-                      {f.recommendedHydration.min}–{f.recommendedHydration.max}%
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            {(['German', 'Italian Import'] as const).map((grp) => (
+              <div key={grp} className="mb-2">
+                <div className="text-[8px] font-black uppercase tracking-widest text-slate-400 font-mono mb-1 px-0.5">
+                  {grp === 'German' ? '🇩🇪 German Supermarket' : '🇮🇹 Italian Import — Amazon.de / pizza1.de'}
+                </div>
+                <div className="grid grid-cols-1 gap-1">
+                  {FLOUR_TYPES.filter(f => f.group === grp).map((f) => {
+                    const isActive = selectedFlourId === f.id;
+                    return (
+                      <button
+                        key={f.id}
+                        onClick={() => handleSelectFlour(f.id)}
+                        className={`px-3 py-2 text-left border-2 rounded-none transition-all flex items-center gap-3 ${
+                          isActive
+                            ? 'bg-slate-900 border-slate-900 text-white'
+                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <span className="text-[10px] font-black uppercase tracking-tight block truncate">
+                            {f.germanLabel}
+                          </span>
+                          <span className={`text-[8px] font-mono ${isActive ? 'text-white/50' : 'text-slate-400'}`}>
+                            {f.proteinRange} protein
+                          </span>
+                        </div>
+                        <span className={`text-[11px] font-black font-mono shrink-0 ${isActive ? 'text-[#E60012]' : 'text-slate-700'}`}>
+                          {f.wValue}
+                        </span>
+                        <span className={`text-[8px] font-mono shrink-0 ${isActive ? 'text-white/60' : 'text-slate-400'}`}>
+                          {f.recommendedHydration.min}–{f.recommendedHydration.max}%
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
             {/* Hydration range status — always visible */}
             <div className={`mt-2 px-2.5 py-1.5 flex items-center gap-1.5 border text-[9px] font-mono font-bold ${
               hydrationRangeStatus.ok
