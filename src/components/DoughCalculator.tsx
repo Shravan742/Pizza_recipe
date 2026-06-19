@@ -1342,18 +1342,6 @@ export default function DoughCalculator({
             )}
           </div>
 
-          {/* ── FDT CTA ── */}
-          {onSendToFdt && (
-            <div className="p-4">
-              <button
-                onClick={() => onSendToFdt(weights.flour, weights.water)}
-                className="w-full py-3 bg-slate-900 hover:bg-[#E60012] text-white text-[10px] font-black uppercase tracking-widest border-2 border-slate-900 transition-all flex items-center justify-center gap-2 brutalist-shadow-sm active:translate-x-px active:translate-y-px"
-              >
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} />
-                Calculate Water Temperature ↓
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
@@ -1498,18 +1486,27 @@ export default function DoughCalculator({
             </div>
           )}
 
-          {/* Journal CTA */}
-          {onSendToJournal && (
-            <div className="border-t-2 border-slate-900 pt-4">
+          {/* Action buttons */}
+          <div className="border-t-2 border-slate-900 pt-4 flex flex-col sm:flex-row gap-2">
+            {onSendToFdt && (
+              <button
+                onClick={() => onSendToFdt(weights.flour, weights.water)}
+                className="flex-1 py-3 bg-slate-900 hover:bg-slate-700 text-white text-[10px] font-black uppercase tracking-widest border-2 border-slate-900 transition-all flex items-center justify-center gap-2 brutalist-shadow-sm active:translate-x-px active:translate-y-px"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                Calculate Water Temperature ↓
+              </button>
+            )}
+            {onSendToJournal && (
               <button
                 onClick={() => onSendToJournal(recipe, weights)}
-                className="w-full py-3.5 bg-[#E60012] hover:bg-slate-950 text-white font-black text-xs tracking-widest uppercase border-2 border-slate-900 transition-all flex items-center justify-center gap-2 brutalist-shadow active:translate-x-px active:translate-y-px"
+                className="flex-1 py-3 bg-[#E60012] hover:bg-slate-950 text-white font-black text-[10px] tracking-widest uppercase border-2 border-slate-900 transition-all flex items-center justify-center gap-2 brutalist-shadow active:translate-x-px active:translate-y-px"
               >
-                <Layers className="w-4 h-4" />
-                Initialize LAB Test Protocol Log
+                <Layers className="w-3.5 h-3.5" />
+                Initialize LAB Protocol Log
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* ── Mixer guide ── */}
