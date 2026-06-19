@@ -48,6 +48,8 @@ export interface PizzaPreset {
   portionLabel: string;       // singular: "ball", "tray", "pan", "flatbread"
   portionLabelPlural: string; // plural:   "balls", "trays", "pans", "flatbreads"
   yeastType: 'dry' | 'fresh';
+  minOvenTemp: number;   // minimum oven temp (°C) for good results
+  minWStrength: number;  // minimum flour W-value for this style
   timings: {
     bulkRT: string;
     bulkCold: string;
@@ -77,6 +79,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 280,
     portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
+    minOvenTemp: 220, minWStrength: 200,
     timings: {
       bulkRT: '2 hours @ 22°C',
       bulkCold: '16–20 hours @ 7°C',
@@ -113,6 +116,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 250,
     portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
+    minOvenTemp: 350, minWStrength: 250,
     timings: {
       bulkRT: '18 hours @ 20°C',
       bulkCold: '0 hours (not recommended)',
@@ -149,6 +153,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 280,
     portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
+    minOvenTemp: 350, minWStrength: 260,
     timings: {
       bulkRT: '2 hours @ 20°C',
       bulkCold: '24–40 hours @ 4–6°C',
@@ -184,6 +189,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 220,
     portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
+    minOvenTemp: 380, minWStrength: 280,
     timings: {
       bulkRT: '1 hour @ 18–22°C',
       bulkCold: '33 hours @ 4°C',
@@ -220,6 +226,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 380,
     portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
+    minOvenTemp: 240, minWStrength: 150,
     timings: {
       bulkRT: '1 hour @ 22°C',
       bulkCold: '24–72 hours @ 4°C',
@@ -256,6 +263,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 750,
     portionType: 'slab', portionLabel: 'tray', portionLabelPlural: 'trays',
     yeastType: 'dry',
+    minOvenTemp: 220, minWStrength: 180,
     timings: {
       bulkRT: '1 hour @ 20°C',
       bulkCold: '24–48 hours @ 4°C',
@@ -291,6 +299,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 180,
     portionType: 'flatbread', portionLabel: 'flatbread', portionLabelPlural: 'flatbreads',
     yeastType: 'dry',
+    minOvenTemp: 280, minWStrength: 120,
     timings: {
       bulkRT: '2 hours @ 20°C',
       bulkCold: '20 hours @ 4°C',
@@ -327,6 +336,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 450,
     portionType: 'slab', portionLabel: 'pan', portionLabelPlural: 'pans',
     yeastType: 'dry',
+    minOvenTemp: 220, minWStrength: 150,
     timings: {
       bulkRT: '2 hours @ 21°C',
       bulkCold: '24–48 hours @ 4°C',
@@ -362,6 +372,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 155,
     portionType: 'flatbread', portionLabel: 'flatbread', portionLabelPlural: 'flatbreads',
     yeastType: 'dry',
+    minOvenTemp: 200, minWStrength: 100,
     timings: {
       bulkRT: '1 hour @ 21°C',
       bulkCold: '0 hours',
@@ -397,6 +408,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 600,
     portionType: 'slab', portionLabel: 'tray', portionLabelPlural: 'trays',
     yeastType: 'dry',
+    minOvenTemp: 210, minWStrength: 120,
     timings: {
       bulkRT: '2 hours @ 21°C',
       bulkCold: '18–24 hours @ 4°C',
@@ -757,6 +769,9 @@ export default function DoughCalculator({
             <div className="grid grid-cols-3 gap-1.5">
               {PIZZA_PRESETS.map((preset) => {
                 const isActive = activePresetId === preset.id;
+                const ovenOk = (ovenType === 'pro' ? 500 : 250) >= preset.minOvenTemp;
+                const flourOk = selectedFlour.wMin >= preset.minWStrength;
+                const compatible = ovenOk && flourOk;
                 return (
                   <button
                     key={preset.id}
@@ -765,7 +780,7 @@ export default function DoughCalculator({
                       isActive
                         ? 'bg-slate-900 border-slate-900 text-white'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-700 hover:bg-slate-100'
-                    }`}
+                    } ${!compatible && !isActive ? 'opacity-35' : ''}`}
                   >
                     <span className="text-[9px] font-black uppercase tracking-tight block leading-tight">
                       {preset.shortName}
@@ -776,6 +791,11 @@ export default function DoughCalculator({
                       </span>
                       {preset.oilPercent > 0 && (
                         <span className={`text-[6px] font-mono px-0.5 border ${isActive ? 'border-white/20 text-white/40' : 'border-slate-300 text-slate-400'}`}>OIL</span>
+                      )}
+                      {!compatible && !isActive && (
+                        <span className="text-[6px] font-mono px-0.5 border border-red-300 text-red-400">
+                          {!ovenOk && !flourOk ? 'OVEN+FLOUR' : !ovenOk ? 'OVEN' : 'FLOUR'}
+                        </span>
                       )}
                     </div>
                   </button>
