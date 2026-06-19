@@ -724,9 +724,36 @@ export default function DoughCalculator({
       <div className="lg:col-span-5 flex flex-col gap-4">
         <div className="bg-white border-2 border-slate-900 brutalist-shadow">
 
-          {/* ── 01: Pizza Style ── */}
+          {/* ── 01: Oven Type ── */}
           <div className="p-5 border-b border-slate-200">
-            <StepHeader num="01" title="Pizza Style" sub="pick your fermentation protocol" />
+            <StepHeader num="01" title="Oven Type" sub="adapts bake temp + time for your setup" />
+            <div className="flex gap-1.5">
+              {([
+                { id: 'home' as const, label: 'Home Oven', sub: '≤ 250°C max' },
+                { id: 'pro'  as const, label: 'High Heat',     sub: 'Steel 280°C+ / Wood-fired / Effeuno' },
+              ]).map((opt) => {
+                const isActive = ovenType === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setOvenType(opt.id)}
+                    className={`flex-1 py-2.5 px-2 border-2 rounded-none transition-all flex flex-col items-center gap-0.5 ${
+                      isActive
+                        ? 'bg-slate-900 border-slate-900 text-white'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-700'
+                    }`}
+                  >
+                    <span className="text-[10px] font-black uppercase">{opt.label}</span>
+                    <span className={`text-[8px] font-mono text-center leading-tight ${isActive ? 'text-white/60' : 'text-slate-400'}`}>{opt.sub}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── 03: Pizza Style ── */}
+          <div className="p-5 border-b border-slate-200">
+            <StepHeader num="03" title="Pizza Style" sub="pick your fermentation protocol" />
             <div className="grid grid-cols-3 gap-1.5">
               {PIZZA_PRESETS.map((preset) => {
                 const isActive = activePresetId === preset.id;
@@ -912,10 +939,10 @@ export default function DoughCalculator({
             </div>
           </div>
 
-          {/* ── 03: Batch size ── */}
+          {/* ── 04: Batch size ── */}
           <div className="p-5 border-b border-slate-200">
             <StepHeader
-              num="03"
+              num="04"
               title="Batch Size"
               sub={portion.isSlab ? `how many ${portion.plural} + how heavy` : `how many + how big`}
             />
@@ -983,9 +1010,9 @@ export default function DoughCalculator({
             </div>
           </div>
 
-          {/* ── 04: Mixer ── */}
+          {/* ── 05: Mixer ── */}
           <div className="p-5 border-b border-slate-200">
-            <StepHeader num="04" title="Mixing Method" sub="sets friction factor for water temp calc" />
+            <StepHeader num="05" title="Mixing Method" sub="sets friction factor for water temp calc" />
             <div className="flex gap-1.5">
               {MIXER_OPTIONS.map((m) => {
                 const isActive = selectedMixer === m.id;
@@ -1008,33 +1035,6 @@ export default function DoughCalculator({
             <p className="text-[9px] font-mono text-slate-400 mt-1.5">
               FDT calculator below uses this mixer's friction factor automatically.
             </p>
-          </div>
-
-          {/* ── 05: Oven Type ── */}
-          <div className="p-5 border-b border-slate-200">
-            <StepHeader num="05" title="Oven Type" sub="adapts bake temp + time for your setup" />
-            <div className="flex gap-1.5">
-              {([
-                { id: 'home' as const, label: 'Home Oven', sub: '≤ 250°C max' },
-                { id: 'pro'  as const, label: 'High Heat',     sub: 'Steel 280°C+ / Wood-fired / Effeuno' },
-              ]).map((opt) => {
-                const isActive = ovenType === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => setOvenType(opt.id)}
-                    className={`flex-1 py-2.5 px-2 border-2 rounded-none transition-all flex flex-col items-center gap-0.5 ${
-                      isActive
-                        ? 'bg-slate-900 border-slate-900 text-white'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-700'
-                    }`}
-                  >
-                    <span className="text-[10px] font-black uppercase">{opt.label}</span>
-                    <span className={`text-[8px] font-mono text-center leading-tight ${isActive ? 'text-white/60' : 'text-slate-400'}`}>{opt.sub}</span>
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
           {/* ── Advanced fine-tune (collapsed by default) ── */}
