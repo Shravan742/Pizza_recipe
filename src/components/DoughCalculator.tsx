@@ -875,58 +875,6 @@ export default function DoughCalculator({
             </div>
           </div>
 
-          {/* ── 03: Pizza Style ── */}
-          <div className="p-5 border-b border-slate-200">
-            <StepHeader num="03" title="Pizza Style" sub="pick your fermentation protocol" />
-            <div className="grid grid-cols-3 gap-1.5">
-              {PIZZA_PRESETS.map((preset) => {
-                const isActive = activePresetId === preset.id;
-                const ovenOk = (ovenType === 'pro' ? 500 : 250) >= preset.minOvenTemp;
-                const flourOk = selectedFlour.wMin >= preset.minWStrength;
-                const compatible = ovenOk && flourOk;
-                return (
-                  <button
-                    key={preset.id}
-                    onClick={() => handleSelectPreset(preset.id)}
-                    className={`p-2 text-left border-2 rounded-none transition-all flex flex-col gap-0.5 ${
-                      isActive
-                        ? 'bg-slate-900 border-slate-900 text-white'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-700 hover:bg-slate-100'
-                    } ${!compatible && !isActive ? 'opacity-35' : ''}`}
-                  >
-                    <span className="text-[9px] font-black uppercase tracking-tight block leading-tight">
-                      {preset.shortName}
-                    </span>
-                    <div className="flex flex-wrap gap-1 mt-0.5">
-                      <span className={`text-[7px] font-mono ${isActive ? 'text-white/60' : 'text-slate-400'}`}>
-                        {preset.hydration}%
-                      </span>
-                      {preset.oilPercent > 0 && (
-                        <span className={`text-[6px] font-mono px-0.5 border ${isActive ? 'border-white/20 text-white/40' : 'border-slate-300 text-slate-400'}`}>OIL</span>
-                      )}
-                      {!compatible && !isActive && (
-                        <span className="text-[6px] font-mono px-0.5 border border-red-300 text-red-400">
-                          {!ovenOk && !flourOk ? 'OVEN+FLOUR' : !ovenOk ? 'OVEN' : 'FLOUR'}
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-              <button
-                onClick={() => handleSelectPreset('custom')}
-                className={`p-2 text-left border-2 rounded-none transition-all ${
-                  activePresetId === 'custom'
-                    ? 'bg-[#E60012] border-slate-900 text-white'
-                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-700'
-                }`}
-              >
-                <span className="text-[9px] font-black uppercase block">Custom</span>
-                <span className={`text-[7px] font-mono ${activePresetId === 'custom' ? 'text-white/70' : 'text-slate-400'}`}>manual</span>
-              </button>
-            </div>
-          </div>
-
           {/* ── 02: Flour ── */}
           <div className="p-5 border-b border-slate-200">
             <StepHeader num="02" title="Flour" sub="hydration auto-adjusts to flour's safe range" />
@@ -1075,6 +1023,58 @@ export default function DoughCalculator({
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* ── 03: Pizza Style ── */}
+          <div className="p-5 border-b border-slate-200">
+            <StepHeader num="03" title="Pizza Style" sub="pick your fermentation protocol" />
+            <div className="grid grid-cols-3 gap-1.5">
+              {PIZZA_PRESETS.map((preset) => {
+                const isActive = activePresetId === preset.id;
+                const ovenOk = (ovenType === 'pro' ? 500 : 250) >= preset.minOvenTemp;
+                const flourOk = selectedFlour.wMin >= preset.minWStrength;
+                const compatible = ovenOk && flourOk;
+                return (
+                  <button
+                    key={preset.id}
+                    onClick={() => handleSelectPreset(preset.id)}
+                    className={`p-2 text-left border-2 rounded-none transition-all flex flex-col gap-0.5 ${
+                      isActive
+                        ? 'bg-slate-900 border-slate-900 text-white'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-700 hover:bg-slate-100'
+                    } ${!compatible && !isActive ? 'opacity-35' : ''}`}
+                  >
+                    <span className="text-[9px] font-black uppercase tracking-tight block leading-tight">
+                      {preset.shortName}
+                    </span>
+                    <div className="flex flex-wrap gap-1 mt-0.5">
+                      <span className={`text-[7px] font-mono ${isActive ? 'text-white/60' : 'text-slate-400'}`}>
+                        {preset.hydration}%
+                      </span>
+                      {preset.oilPercent > 0 && (
+                        <span className={`text-[6px] font-mono px-0.5 border ${isActive ? 'border-white/20 text-white/40' : 'border-slate-300 text-slate-400'}`}>OIL</span>
+                      )}
+                      {!compatible && !isActive && (
+                        <span className="text-[6px] font-mono px-0.5 border border-red-300 text-red-400">
+                          {!ovenOk && !flourOk ? 'OVEN+FLOUR' : !ovenOk ? 'OVEN' : 'FLOUR'}
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => handleSelectPreset('custom')}
+                className={`p-2 text-left border-2 rounded-none transition-all ${
+                  activePresetId === 'custom'
+                    ? 'bg-[#E60012] border-slate-900 text-white'
+                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-700'
+                }`}
+              >
+                <span className="text-[9px] font-black uppercase block">Custom</span>
+                <span className={`text-[7px] font-mono ${activePresetId === 'custom' ? 'text-white/70' : 'text-slate-400'}`}>manual</span>
+              </button>
             </div>
           </div>
 
