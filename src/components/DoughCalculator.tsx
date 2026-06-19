@@ -124,9 +124,9 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
       ballCold: '0 hours (not recommended)',
       bakeTemp: '430°C – 485°C (wood-fired / Effeuno)',
       bakeTime: '60–90 seconds',
-      bakeTempHome: '230–300°C — use Tipo 0 flour (not 00) for better browning. Baking Steel, top rack, 45 min preheat. Switch to broiler after base sets.',
+      bakeTempHome: '230–300°C — Baking Steel, top rack, 45 min preheat. Switch to broiler after base sets.',
       bakeTimeHome: '5–8 min base, then 3–4 min with toppings',
-      homeNote: 'Stadler Made recommends switching from 00 to Tipo 0 flour for home-oven Neapolitan — it browns better at lower temperatures. Use a pizza steel and broiler to mimic the char.',
+      homeNote: 'Tip: if you are using Italian Tipo 00 flour, switch to Tipo 0 instead for home ovens — it browns better at lower temperatures (Stadler Made recommendation). German flours like Typ 550 already perform well here.',
     },
     steps: [
       'Dissolve dry or fresh yeast completely in all of the calculated water.',
@@ -258,7 +258,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     description: 'Super-airy rectangular pan pizza from Stadler Made. 80% hydration, 90% strong flour + 10% semolina, fresh yeast. 40–70h cold ferment. Fluffy inside, crispy bottom.',
     hydration: 80,
     saltPercent: 2.5,
-    yeastPercent: 0.69,
+    yeastPercent: 0.22,
     oilPercent: 2,
     sugarPercent: 0,
     ballWeight: 400,
@@ -368,7 +368,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     description: 'Authentic Sfincione Palermitano from Stadler Made. Fluffy focaccia-like slab baked in a pan with cooked tomato-onion sauce, caciocavallo cheese, and toasted breadcrumbs.',
     hydration: 67,
     saltPercent: 1.88,
-    yeastPercent: 1.44,
+    yeastPercent: 0.47,
     oilPercent: 4.4,
     sugarPercent: 1.88,
     ballWeight: 570,
@@ -486,7 +486,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 375,
     portionType: 'slab', portionLabel: 'pan', portionLabelPlural: 'pans',
     yeastType: 'fresh',
-    minOvenTemp: 210, minWStrength: 180,
+    minOvenTemp: 210, minWStrength: 260,
     timings: {
       bulkRT: '40 min at room temp',
       bulkCold: '10–12 hours @ 4°C',
@@ -784,7 +784,7 @@ export default function DoughCalculator({
 
   // ── Auto-calculate the best hydration for a given preset + flour combination ──
   const clampHydration = (raw: number, flour: FlourType) =>
-    Math.min(flour.recommendedHydration.max, Math.max(flour.recommendedHydration.min, raw));
+    Math.min(flour.recommendedHydration.max, raw);
 
   // ── Load a preset (auto-adjusts hydration for currently selected flour) ──
   const handleSelectPreset = (presetId: string) => {
@@ -849,8 +849,8 @@ export default function DoughCalculator({
 
   // ── Sync activePresetId highlight when user fine-tunes in Advanced ──
   useEffect(() => {
-    const { min, max } = selectedFlour.recommendedHydration;
-    const clamp = (v: number) => Math.min(max, Math.max(min, v));
+    const { max } = selectedFlour.recommendedHydration;
+    const clamp = (v: number) => Math.min(max, v);
     const match = PIZZA_PRESETS.find(p => {
       // ballWeight must match one of the S/M/L scaled values for this preset
       const validWeights = (['S', 'M', 'L'] as PizzaSize[]).map(s =>
@@ -1282,7 +1282,7 @@ export default function DoughCalculator({
                   label="Hydration"
                   value={hydration}
                   unit="%"
-                  min={50} max={90}
+                  min={35} max={90}
                   step={1}
                   onChange={v => updateField('hydration', v)}
                   highlight={`Safe: ${selectedFlour.recommendedHydration.min}–${selectedFlour.recommendedHydration.max}%`}
@@ -1440,9 +1440,9 @@ export default function DoughCalculator({
                   <span className="font-black">⚠ Home Oven Adaptation — </span>{activePreset.timings.homeNote}
                 </div>
               )}
-              {ovenType === 'pro' && !activePreset.timings.homeNote && (
+              {ovenType === 'pro' && activePreset.minOvenTemp > 250 && (
                 <div className="bg-emerald-50 border border-emerald-400 px-3 py-1.5 text-[9px] font-mono text-emerald-800">
-                  ✓ This style is designed for home oven temps — high heat gives the same or better result.
+                  ✓ Pro oven unlocks this style fully — target {activePreset.timings.bakeTemp}.
                 </div>
               )}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-50 border-2 border-slate-900 p-3 font-mono">
