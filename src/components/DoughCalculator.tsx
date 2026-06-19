@@ -79,7 +79,7 @@ export const PIZZA_PRESETS: PizzaPreset[] = [
     ballWeight: 280,
     portionType: 'ball', portionLabel: 'ball', portionLabelPlural: 'balls',
     yeastType: 'dry',
-    minOvenTemp: 220, minWStrength: 200,
+    minOvenTemp: 220, minWStrength: 150,
     timings: {
       bulkRT: '2 hours @ 22°C',
       bulkCold: '16–20 hours @ 7°C',
@@ -660,7 +660,7 @@ export default function DoughCalculator({
 
   const [activePresetId, setActivePresetId]   = useState<string>('beginner');
   const [displayPresetId, setDisplayPresetId] = useState<string>('beginner');
-  const [selectedFlourId, setSelectedFlourId] = useState<string>('typ00_import');
+  const [selectedFlourId, setSelectedFlourId] = useState<string>('typ550');
   const [pizzaSize, setPizzaSize]             = useState<PizzaSize>('M');
   const [showAdvanced, setShowAdvanced]       = useState(false);
   const [showOil, setShowOil]                 = useState(false);
@@ -964,26 +964,35 @@ export default function DoughCalculator({
                   {/* Second flour picker */}
                   <div>
                     <span className="text-[9px] font-mono text-slate-500 uppercase block mb-1.5">Second flour</span>
-                    <div className="flex flex-col gap-1">
-                      {FLOUR_TYPES.filter(f => f.id !== selectedFlourId).map(f => (
-                        <button
-                          key={f.id}
-                          onClick={() => {
-                            setBlendSecondId(f.id);
-                            const bMin = Math.round((primaryFlour.recommendedHydration.min * blendPrimaryPct + f.recommendedHydration.min * (100 - blendPrimaryPct)) / 100);
-                            const bMax = Math.round((primaryFlour.recommendedHydration.max * blendPrimaryPct + f.recommendedHydration.max * (100 - blendPrimaryPct)) / 100);
-                            const clamped = Math.min(bMax, Math.max(bMin, hydration));
-                            if (clamped !== hydration) onChange({ ...recipe, hydration: clamped });
-                          }}
-                          className={`px-2.5 py-1.5 text-left border-2 rounded-none transition-all flex items-center justify-between gap-2 ${
-                            blendSecondId === f.id
-                              ? 'bg-slate-900 border-slate-900 text-white'
-                              : 'bg-white border-slate-200 text-slate-700 hover:border-slate-600'
-                          }`}
-                        >
-                          <span className="text-[9px] font-black uppercase truncate">{f.germanLabel}</span>
-                          <span className={`text-[9px] font-mono shrink-0 ${blendSecondId === f.id ? 'text-[#E60012]' : 'text-slate-500'}`}>{f.wValue}</span>
-                        </button>
+                    <div className="flex flex-col gap-2">
+                      {(['German', 'Italian Import'] as const).map(grp => (
+                        <div key={grp}>
+                          <div className="text-[8px] font-black uppercase tracking-widest text-slate-400 font-mono mb-1">
+                            {grp === 'German' ? '🇩🇪 German' : '🇮🇹 Italian Import'}
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            {FLOUR_TYPES.filter(f => f.group === grp && f.id !== selectedFlourId).map(f => (
+                              <button
+                                key={f.id}
+                                onClick={() => {
+                                  setBlendSecondId(f.id);
+                                  const bMin = Math.round((primaryFlour.recommendedHydration.min * blendPrimaryPct + f.recommendedHydration.min * (100 - blendPrimaryPct)) / 100);
+                                  const bMax = Math.round((primaryFlour.recommendedHydration.max * blendPrimaryPct + f.recommendedHydration.max * (100 - blendPrimaryPct)) / 100);
+                                  const clamped = Math.min(bMax, Math.max(bMin, hydration));
+                                  if (clamped !== hydration) onChange({ ...recipe, hydration: clamped });
+                                }}
+                                className={`px-2.5 py-1.5 text-left border-2 rounded-none transition-all flex items-center justify-between gap-2 ${
+                                  blendSecondId === f.id
+                                    ? 'bg-slate-900 border-slate-900 text-white'
+                                    : 'bg-white border-slate-200 text-slate-700 hover:border-slate-600'
+                                }`}
+                              >
+                                <span className="text-[9px] font-black uppercase truncate">{f.germanLabel}</span>
+                                <span className={`text-[9px] font-mono shrink-0 ${blendSecondId === f.id ? 'text-[#E60012]' : 'text-slate-500'}`}>{f.wValue}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -1517,18 +1526,27 @@ export default function DoughCalculator({
           </div>
 
           {activeGermanTab === 'flour' && (
-            <div className="space-y-2.5">
-              {FLOUR_TYPES.map((f) => (
-                <div key={f.id} className="p-3 border-2 border-slate-200 bg-slate-50 flex flex-col gap-1">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <span className="text-[10px] font-black uppercase font-mono">{f.germanLabel}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black font-mono text-[#E60012]">{f.wValue}</span>
-                      <span className="text-[9px] font-mono text-slate-400">{f.proteinRange}</span>
-                      <span className="text-[9px] font-mono text-emerald-700 font-bold">{f.recommendedHydration.min}–{f.recommendedHydration.max}%</span>
-                    </div>
+            <div className="space-y-4">
+              {(['German', 'Italian Import'] as const).map(grp => (
+                <div key={grp}>
+                  <div className="text-[8px] font-black uppercase tracking-widest text-slate-400 font-mono mb-2">
+                    {grp === 'German' ? '🇩🇪 German Supermarket' : '🇮🇹 Italian Import'}
                   </div>
-                  <p className="text-[10px] text-slate-600 italic font-sans">{f.alterationTip}</p>
+                  <div className="space-y-2">
+                    {FLOUR_TYPES.filter(f => f.group === grp).map((f) => (
+                      <div key={f.id} className="p-3 border-2 border-slate-200 bg-slate-50 flex flex-col gap-1">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <span className="text-[10px] font-black uppercase font-mono">{f.germanLabel}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black font-mono text-[#E60012]">{f.wValue}</span>
+                            <span className="text-[9px] font-mono text-slate-400">{f.proteinRange}</span>
+                            <span className="text-[9px] font-mono text-emerald-700 font-bold">{f.recommendedHydration.min}–{f.recommendedHydration.max}%</span>
+                          </div>
+                        </div>
+                        <p className="text-[10px] text-slate-600 italic font-sans">{f.alterationTip}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
