@@ -505,7 +505,7 @@ export default function DoughCalculator({
   const [showAdvanced, setShowAdvanced]       = useState(false);
   const [showOil, setShowOil]                 = useState(false);
   const [showSugar, setShowSugar]             = useState(false);
-  const [activeGermanTab, setActiveGermanTab] = useState<'flour' | 'oven'>('flour');
+  const [activeGermanTab, setActiveGermanTab] = useState<'flour' | 'oven' | 'diagnose'>('flour');
   const [blendEnabled, setBlendEnabled]       = useState(false);
   const [blendSecondId, setBlendSecondId]     = useState<string>('typ550');
   const [blendPrimaryPct, setBlendPrimaryPct] = useState<number>(70);
@@ -1332,10 +1332,10 @@ export default function DoughCalculator({
               </h3>
             </div>
             <div className="flex bg-slate-100 p-0.5 border-2 border-slate-900">
-              {(['flour', 'oven'] as const).map((tab) => (
+              {(['flour', 'oven', 'diagnose'] as const).map((tab) => (
                 <button key={tab} onClick={() => setActiveGermanTab(tab)}
                   className={`px-4 py-1 text-[10px] font-black uppercase transition-all ${activeGermanTab === tab ? 'bg-slate-900 text-white' : 'text-slate-600 hover:text-slate-900'}`}>
-                  {tab === 'flour' ? 'Flour Guide' : 'Oven Tactics'}
+                  {tab === 'flour' ? 'Flour Guide' : tab === 'oven' ? 'Oven Tactics' : 'Diagnose'}
                 </button>
               ))}
             </div>
@@ -1356,6 +1356,45 @@ export default function DoughCalculator({
                   <p className="text-[10px] text-slate-600 italic font-sans">{f.alterationTip}</p>
                 </div>
               ))}
+            </div>
+          )}
+
+          {activeGermanTab === 'diagnose' && (
+            <div className="space-y-3">
+              <div className="bg-slate-100 border-l-4 border-[#E60012] p-3 font-mono text-[10px]">
+                <b>Reading dough is a skill.</b> Touch. Look. Compare. 10 seconds of honest observation beats 10 years of guessing. — Benjamin Schmitz, <i>Dough Control</i>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-[10px] font-mono border-collapse">
+                  <thead>
+                    <tr className="bg-slate-900 text-white">
+                      <th className="p-2 text-left font-black uppercase border border-slate-700 w-1/3">Symptom</th>
+                      <th className="p-2 text-left font-black uppercase border border-slate-700 w-1/3">Likely Cause</th>
+                      <th className="p-2 text-left font-black uppercase border border-slate-700 w-1/3">Fix / What to Check</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { symptom: 'Dough collapsed / flat', cause: 'Overproofed — too warm, too much yeast, or too long', fix: 'Reduce time, lower temp, or cut yeast dose' },
+                      { symptom: "Dough doesn't rise", cause: 'Underproofed, environment too cold, or old yeast', fix: 'Longer proof, check ambient temp, use fresh yeast' },
+                      { symptom: 'Tears when stretching', cause: 'Weak gluten or excessive protease activity', fix: 'Shorter fermentation, switch to stronger flour (higher W)' },
+                      { symptom: 'Too tight / rubbery', cause: 'Underfermented, too cold, gluten not relaxed', fix: 'Let it rest longer, warmer proof, extend bulk ferment' },
+                      { symptom: 'Smells sour or off', cause: 'Overfermentation or enzyme overload', fix: 'Shorter ferment, cooler environment, less yeast' },
+                      { symptom: 'Crust is pale / flat', cause: 'Underfermented or bake too short', fix: 'Longer ferment, preheat oven/steel fully (min 45–60 min)' },
+                    ].map(({ symptom, cause, fix }, i) => (
+                      <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                        <td className="p-2 border border-slate-200 font-bold text-slate-900">{symptom}</td>
+                        <td className="p-2 border border-slate-200 text-slate-600">{cause}</td>
+                        <td className="p-2 border border-slate-200 text-emerald-800 font-bold">{fix}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="p-3 border-2 border-slate-900 bg-slate-50 text-[10px] font-sans text-slate-700">
+                <b className="font-mono uppercase text-[9px]">The 3 controls</b><br />
+                Fermentation has three dials: <b>Time</b>, <b>Temperature</b>, and <b>Yeast</b>. Push one too hard and the dough breaks. Ignore one and it sleeps. Master all three and you have control. — Schmitz, <i>Dough Control</i>
+              </div>
             </div>
           )}
 
